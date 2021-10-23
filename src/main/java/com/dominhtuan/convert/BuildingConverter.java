@@ -10,10 +10,10 @@ import org.springframework.stereotype.Component;
 public class BuildingConverter {
 
     @Autowired
-    private ModelMapper modelMapper1;
+    private ModelMapper modelMapper;
 
     public BuildingSearchResponse buildingEntityToBuildingResponse(BuildingEntity buildingEntity, String districtName){
-        BuildingSearchResponse buildingResponse = modelMapper1.map(buildingEntity,BuildingSearchResponse.class);
+        BuildingSearchResponse buildingResponse = modelMapper.map(buildingEntity,BuildingSearchResponse.class);
         buildingResponse.setAddress(buildingEntity.getStreet()+"-"+buildingEntity.getWard()+"-"+districtName);
 //        buildingResponse.setName(buildingEntity.getName());
 //        buildingResponse.setFloorArea(buildingEntity.getFloorArea());

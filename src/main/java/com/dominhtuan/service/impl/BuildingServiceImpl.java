@@ -6,7 +6,7 @@ import com.dominhtuan.dto.request.BuildingSearchRequest;
 import com.dominhtuan.dto.response.BuildingSearchResponse;
 import com.dominhtuan.entity.BuildingEntity;
 import com.dominhtuan.entity.DistrictEntity;
-import com.dominhtuan.exception.FieldNullException;
+import com.dominhtuan.exception.YeuDiemPhucException;
 import com.dominhtuan.jdbc.BuildingJDBC;
 import com.dominhtuan.jdbc.DistrictJDBC;
 import com.dominhtuan.service.BuildingService;
@@ -29,10 +29,11 @@ public class BuildingServiceImpl implements BuildingService {
     @Override
     public List<BuildingSearchResponse> findBuilding(BuildingSearchRequest buildingSearchRequest) throws SQLException {
         List<BuildingSearchResponse> buildingResponses = new ArrayList<>();
-        for(BuildingEntity item : buildingJDBC.findBuilding(buildingSearchRequest)){
+        valiteNameInput(buildingSearchRequest);
+        for (BuildingEntity item : buildingJDBC.findBuilding(buildingSearchRequest)) {
             DistrictEntity districtEntity = districtJDBC.findDistrictByDistrictID(item.getDistrictID());
             String districtName = districtEntity.getName();
-            BuildingSearchResponse buildingResponse = buildingConverter.buildingEntityToBuildingResponse(item,districtName);
+            BuildingSearchResponse buildingResponse = buildingConverter.buildingEntityToBuildingResponse(item, districtName);
             buildingResponses.add(buildingResponse);
         }
         return buildingResponses;
@@ -40,15 +41,17 @@ public class BuildingServiceImpl implements BuildingService {
 
     @Override
     public void save(BuildingDTO buildingDTO) {
+
+    }
+
+    private void valiteNameInput(BuildingSearchRequest buildingSearchRequest) {
         try {
-            validate(buildingDTO);
-        } catch (FieldNullException e) {
+            if (buildingSearchRequest.getBuildingName().equals("yeu diem phuc") && buildingSearchRequest != null) {
+                throw new YeuDiemPhucException("Ahihi đồ ngốc");
+            }
+        } catch (YeuDiemPhucException e) {
             throw e;
         }
-    }
-    private void validate(BuildingDTO buildingDTO) {
-        if (buildingDTO.getName() == null) {
-            throw new FieldNullException("Field is null!!");
-        }
+
     }
 }
