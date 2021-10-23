@@ -24,7 +24,6 @@ public class BuildingAPI {
     }
 
 
-
     @GetMapping
     public List<BuildingSearchResponse> findBuilding(
             @RequestParam(value = "name", required = false) String name,
