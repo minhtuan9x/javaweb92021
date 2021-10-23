@@ -16,14 +16,6 @@ public class BuildingAPI {
     @Autowired
     private BuildingService buildingService;
 
-
-    @PostMapping
-    public BuildingDTO createBuilding(@RequestBody BuildingDTO buildingDTO) {
-        buildingService.save(buildingDTO);
-        return buildingDTO;
-    }
-
-
     @GetMapping
     public List<BuildingSearchResponse> findBuilding(
             @RequestParam(value = "name", required = false) String name,
@@ -62,6 +54,12 @@ public class BuildingAPI {
         buildingSearchRequest.setRentTypes(rentTypes);
         List<BuildingSearchResponse> buildingResponses = buildingService.findBuilding(buildingSearchRequest);
         return buildingResponses;
+    }
+
+    @PostMapping
+    public BuildingDTO createBuilding(@RequestBody BuildingDTO buildingDTO) {
+        buildingService.save(buildingDTO);
+        return buildingDTO;
     }
 
 //    @GetMapping("/{id}")

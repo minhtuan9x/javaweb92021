@@ -1,7 +1,7 @@
 package com.dominhtuan.controlleradvice;
 
 import com.dominhtuan.exception.YeuDiemPhucException;
-import com.dominhtuan.util.HandleMethodUtil;
+import com.dominhtuan.util.HandleExceptionMethodUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -11,7 +11,7 @@ import java.util.Map;
 
 @ControllerAdvice
 public class ControllerAdvisor {
-    private HandleMethodUtil handleMethodUtil = new HandleMethodUtil();
+    private HandleExceptionMethodUtil handleMethodUtil = new HandleExceptionMethodUtil();
 
     @ExceptionHandler(ArithmeticException.class)
     public ResponseEntity<Map<String, Object>> handleArithmeticException(ArithmeticException e) {

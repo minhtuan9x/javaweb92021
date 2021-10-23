@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HandleMethodUtil {
+public class HandleExceptionMethodUtil {
     public ResponseEntity<Map<String,Object>> handleMethod(Exception e, HttpStatus httpStatus){
         ResponseEntity<Map<String,Object>> mapResponseEntity;
         Map<String,Object> data = new HashMap<>();
