@@ -11,7 +11,7 @@ import java.util.Map;
 
 @ControllerAdvice
 public class ControllerAdvisor {
-    HandleMethodUtil handleMethodUtil = new HandleMethodUtil();
+    private HandleMethodUtil handleMethodUtil = new HandleMethodUtil();
 
     @ExceptionHandler(ArithmeticException.class)
     public ResponseEntity<Map<String, Object>> handleArithmeticException(ArithmeticException e) {

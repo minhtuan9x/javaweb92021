@@ -29,7 +29,7 @@ public class BuildingServiceImpl implements BuildingService {
     @Override
     public List<BuildingSearchResponse> findBuilding(BuildingSearchRequest buildingSearchRequest) throws SQLException {
         List<BuildingSearchResponse> buildingResponses = new ArrayList<>();
-        valiteNameInput(buildingSearchRequest);
+        validateNameInput(buildingSearchRequest);
         for (BuildingEntity item : buildingJDBC.findBuilding(buildingSearchRequest)) {
             DistrictEntity districtEntity = districtJDBC.findDistrictByDistrictID(item.getDistrictID());
             String districtName = districtEntity.getName();
@@ -44,10 +44,12 @@ public class BuildingServiceImpl implements BuildingService {
 
     }
 
-    private void valiteNameInput(BuildingSearchRequest buildingSearchRequest) {
+    private void validateNameInput(BuildingSearchRequest buildingSearchRequest) {
         try {
-            if (buildingSearchRequest.getBuildingName().equals("yeu diem phuc") && buildingSearchRequest != null) {
-                throw new YeuDiemPhucException("Ahihi đồ ngốc");
+            if (buildingSearchRequest.getBuildingName() != null) {
+                if (buildingSearchRequest.getBuildingName().equals("yeu diem phuc")) {
+                    throw new YeuDiemPhucException("Ahihi đồ ngốc");
+                }
             }
         } catch (YeuDiemPhucException e) {
             throw e;
