@@ -5,11 +5,11 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ConnectDBUtil {
-    private String url = "jdbc:mysql://localhost:3306/estatebasic";
-    private String user = "root";
-    private String password = "admin";
+    private static String url = "jdbc:mysql://localhost:3306/estatebasic";
+    private static String user = "root";
+    private static String password = "admin";
 
-    public Connection connectDB() throws SQLException {
+    public static Connection connectDB() throws SQLException {
         Connection conn = null;
         try {
             Class.forName("com.mysql.jdbc.Driver");

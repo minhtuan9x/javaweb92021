@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HandleExceptionMethodUtil {
-    public ResponseEntity<Map<String,Object>> handleMethod(Exception e, HttpStatus httpStatus){
+    public static ResponseEntity<Map<String,Object>> handleMethod(Exception e, HttpStatus httpStatus){
         ResponseEntity<Map<String,Object>> mapResponseEntity;
         Map<String,Object> data = new HashMap<>();
         data.put(SystemConstant.STATUS,httpStatus.value());

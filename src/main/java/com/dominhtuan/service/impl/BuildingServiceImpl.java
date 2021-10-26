@@ -46,7 +46,7 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
-    public BuildingSearchRequest getBuildingSearchRequest(Map<String, Object> params) {
+    public BuildingSearchRequest getBuildingSearchRequest(Map<String, Object> params,List<String> rentTypes) {
         BuildingSearchRequest buildingSearchRequest = new BuildingSearchRequest();
         buildingSearchRequest.setBuildingName((String) params.get("name"));
         buildingSearchRequest.setFloorArea((Integer) params.get("floorArea"));
@@ -63,7 +63,7 @@ public class BuildingServiceImpl implements BuildingService {
         buildingSearchRequest.setManagerName((String) params.get("managerName"));
         buildingSearchRequest.setManagerPhone((String) params.get("managerPhone"));
         buildingSearchRequest.setStaffID((Integer) params.get("staffID"));
-        buildingSearchRequest.setRentTypes(getRentTypes((String) params.get("rentTypes")));
+        buildingSearchRequest.setRentTypes(rentTypes);
         return buildingSearchRequest;
     }
 
@@ -80,14 +80,4 @@ public class BuildingServiceImpl implements BuildingService {
 
     }
 
-    private List<String> getRentTypes(String rentTypes) {
-        List<String> results = new ArrayList<>();
-        if(rentTypes == null)
-            return null;
-        String[] rentTypeSplits = rentTypes.split(",");
-        for (String item : rentTypeSplits) {
-            results.add(item);
-        }
-        return results;
-    }
 }
