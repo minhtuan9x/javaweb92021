@@ -147,4 +147,26 @@ public class BuildingSearchRequest extends BaseRequest {
     public void setRentTypes(List<String> rentTypes) {
         this.rentTypes = rentTypes;
     }
+
+    @Override
+    public String toString() {
+        return "BuildingSearchRequest{" +
+                "buildingName='" + buildingName + '\'' +
+                ", floorArea=" + floorArea +
+                ", districtCode='" + districtCode + '\'' +
+                ", ward='" + ward + '\'' +
+                ", street='" + street + '\'' +
+                ", numberOfBasement=" + numberOfBasement +
+                ", direction='" + direction + '\'' +
+                ", level='" + level + '\'' +
+                ", rentAreaFrom=" + rentAreaFrom +
+                ", rentAreaTo=" + rentAreaTo +
+                ", rentPriceFrom=" + rentPriceFrom +
+                ", rentPriceTo=" + rentPriceTo +
+                ", managerName='" + managerName + '\'' +
+                ", managerPhone='" + managerPhone + '\'' +
+                ", staffID=" + staffID +
+                ", rentTypes=" + rentTypes +
+                '}';
+    }
 }

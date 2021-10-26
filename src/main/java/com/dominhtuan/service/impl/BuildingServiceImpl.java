@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class BuildingServiceImpl implements BuildingService {
@@ -44,6 +45,28 @@ public class BuildingServiceImpl implements BuildingService {
 
     }
 
+    @Override
+    public BuildingSearchRequest getBuildingSearchRequest(Map<String, Object> params) {
+        BuildingSearchRequest buildingSearchRequest = new BuildingSearchRequest();
+        buildingSearchRequest.setBuildingName((String) params.get("name"));
+        buildingSearchRequest.setFloorArea((Integer) params.get("floorArea"));
+        buildingSearchRequest.setDistrictCode((String) params.get("districtCode"));
+        buildingSearchRequest.setWard((String) params.get("ward"));
+        buildingSearchRequest.setStreet((String) params.get("street"));
+        buildingSearchRequest.setNumberOfBasement((Integer) params.get("numberOfBasement"));
+        buildingSearchRequest.setDirection((String) params.get("direction"));
+        buildingSearchRequest.setLevel((String) params.get("level"));
+        buildingSearchRequest.setRentAreaFrom((Integer) params.get("rentAreaFrom"));
+        buildingSearchRequest.setRentAreaTo((Integer) params.get("rentAreaTo"));
+        buildingSearchRequest.setRentPriceFrom((Integer) params.get("rentPriceFrom"));
+        buildingSearchRequest.setRentPriceTo((Integer) params.get("rentPriceTo"));
+        buildingSearchRequest.setManagerName((String) params.get("managerName"));
+        buildingSearchRequest.setManagerPhone((String) params.get("managerPhone"));
+        buildingSearchRequest.setStaffID((Integer) params.get("staffID"));
+        buildingSearchRequest.setRentTypes(getRentTypes((String) params.get("rentTypes")));
+        return buildingSearchRequest;
+    }
+
     private void validateNameInput(BuildingSearchRequest buildingSearchRequest) {
         try {
             if (buildingSearchRequest.getBuildingName() != null) {
@@ -55,5 +78,16 @@ public class BuildingServiceImpl implements BuildingService {
             throw e;
         }
 
+    }
+
+    private List<String> getRentTypes(String rentTypes) {
+        List<String> results = new ArrayList<>();
+        if(rentTypes == null)
+            return null;
+        String[] rentTypeSplits = rentTypes.split(",");
+        for (String item : rentTypeSplits) {
+            results.add(item);
+        }
+        return results;
     }
 }

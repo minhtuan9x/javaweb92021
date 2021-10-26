@@ -6,8 +6,10 @@ import com.dominhtuan.dto.response.BuildingSearchResponse;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 public interface BuildingService {
     List<BuildingSearchResponse> findBuilding(BuildingSearchRequest buildingSearchRequest) throws SQLException;
     void save(BuildingDTO buildingDTO);
+    BuildingSearchRequest getBuildingSearchRequest(Map<String,Object> params);
 }
