@@ -102,9 +102,6 @@ public class BuildingJDBCImpl implements BuildingJDBC {
                     .replace(",","','")
                     +"') ");
         }
-
-
-
         if (!CheckInputUtil.isNull(buildingSearchRequest.getStaffID())) {
             query.append("\nand g.id = " + buildingSearchRequest.getStaffID());
         }
