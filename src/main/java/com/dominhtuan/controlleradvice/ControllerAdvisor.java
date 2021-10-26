@@ -11,22 +11,20 @@ import java.util.Map;
 
 @ControllerAdvice
 public class ControllerAdvisor {
+    private ResponseEntity<Map<String, Object>> mapResponseEntity;
 
     @ExceptionHandler(ArithmeticException.class)
     public ResponseEntity<Map<String, Object>> handleArithmeticException(ArithmeticException e) {
-        ResponseEntity<Map<String, Object>> mapResponseEntity = HandleExceptionMethodUtil.handleMethod(e, HttpStatus.INTERNAL_SERVER_ERROR);
-        return mapResponseEntity;
+        return mapResponseEntity = HandleExceptionMethodUtil.handleMethod(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(NumberFormatException.class)
     public ResponseEntity<Map<String, Object>> handleNumberFormatException(NumberFormatException e) {
-        ResponseEntity<Map<String, Object>> mapResponseEntity = HandleExceptionMethodUtil.handleMethod(e, HttpStatus.BAD_REQUEST);
-        return mapResponseEntity;
+        return mapResponseEntity = HandleExceptionMethodUtil.handleMethod(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(YeuDiemPhucException.class)
     public ResponseEntity<Map<String, Object>> handleYeuDiemPhucException(YeuDiemPhucException e) {
-        ResponseEntity<Map<String, Object>> mapResponseEntity = HandleExceptionMethodUtil.handleMethod(e, HttpStatus.PAYMENT_REQUIRED);
-        return mapResponseEntity;
+        return mapResponseEntity = HandleExceptionMethodUtil.handleMethod(e, HttpStatus.PAYMENT_REQUIRED);
     }
 }

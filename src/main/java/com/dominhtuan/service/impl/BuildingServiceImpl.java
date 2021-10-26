@@ -46,26 +46,39 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
-    public BuildingSearchRequest getBuildingSearchRequest(Map<String, Object> params,List<String> rentTypes) {
+    public BuildingSearchRequest getBuildingSearchRequest(Map<String, String> params,List<String> rentTypes) {
         BuildingSearchRequest buildingSearchRequest = new BuildingSearchRequest();
-        buildingSearchRequest.setBuildingName((String) params.get("name"));
-        buildingSearchRequest.setFloorArea((Integer) params.get("floorArea"));
-        buildingSearchRequest.setDistrictCode((String) params.get("districtCode"));
-        buildingSearchRequest.setWard((String) params.get("ward"));
-        buildingSearchRequest.setStreet((String) params.get("street"));
-        buildingSearchRequest.setNumberOfBasement((Integer) params.get("numberOfBasement"));
-        buildingSearchRequest.setDirection((String) params.get("direction"));
-        buildingSearchRequest.setLevel((String) params.get("level"));
-        buildingSearchRequest.setRentAreaFrom((Integer) params.get("rentAreaFrom"));
-        buildingSearchRequest.setRentAreaTo((Integer) params.get("rentAreaTo"));
-        buildingSearchRequest.setRentPriceFrom((Integer) params.get("rentPriceFrom"));
-        buildingSearchRequest.setRentPriceTo((Integer) params.get("rentPriceTo"));
-        buildingSearchRequest.setManagerName((String) params.get("managerName"));
-        buildingSearchRequest.setManagerPhone((String) params.get("managerPhone"));
-        buildingSearchRequest.setStaffID((Integer) params.get("staffID"));
-        buildingSearchRequest.setRentTypes(rentTypes);
+        try{
+            buildingSearchRequest.setBuildingName(params.get("name"));
+            buildingSearchRequest.setDistrictCode(params.get("districtCode"));
+            buildingSearchRequest.setWard(params.get("ward"));
+            buildingSearchRequest.setStreet( params.get("street"));
+            buildingSearchRequest.setDirection(params.get("direction"));
+            buildingSearchRequest.setLevel(params.get("level"));
+            buildingSearchRequest.setManagerName(params.get("managerName"));
+            buildingSearchRequest.setManagerPhone(params.get("managerPhone"));
+            buildingSearchRequest.setRentTypes(rentTypes);
+            if(params.get("floorArea")!=null)
+                buildingSearchRequest.setFloorArea(Integer.valueOf(params.get("floorArea")));
+            if(params.get("numberOfBasement")!=null)
+                buildingSearchRequest.setNumberOfBasement(Integer.valueOf(params.get("numberOfBasement")));
+            if(params.get("rentAreaFrom")!=null)
+                buildingSearchRequest.setRentAreaFrom(Integer.valueOf(params.get("rentAreaFrom")));
+            if(params.get("rentAreaTo")!=null)
+                buildingSearchRequest.setRentAreaTo(Integer.valueOf(params.get("rentAreaTo")));
+            if(params.get("rentPriceFrom")!=null)
+                buildingSearchRequest.setRentPriceFrom(Integer.valueOf(params.get("rentPriceFrom")));
+            if(params.get("rentPriceTo")!=null)
+                buildingSearchRequest.setRentPriceTo(Integer.valueOf(params.get("rentPriceTo")));
+            if(params.get("staffID")!=null)
+                buildingSearchRequest.setStaffID(Integer.valueOf(params.get("staffID")));
+        }catch (Exception e){
+            System.out.println("Loi getBuildingSearchRequest");
+            e.printStackTrace();
+        }
         return buildingSearchRequest;
     }
+
 
     private void validateNameInput(BuildingSearchRequest buildingSearchRequest) {
         try {
