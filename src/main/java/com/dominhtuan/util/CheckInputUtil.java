@@ -17,21 +17,7 @@ public class CheckInputUtil {
         }
         return false;
     }
-
-    //    public static boolean isNull(Object object) {
-//        if (object == null)
-//            return true;
-//        if (object instanceof String) {
-//            if (object.equals(SystemConstant.EMPTY_STRING))
-//                return true;
-//        }
-//        if (object instanceof Integer) {
-//            if (Integer.parseInt(object.toString()) == 0)
-//                return true;
-//        }
-//        return false;
-//    }
     public static boolean isValid(Object object) {
-        return null == object && (SystemConstant.EMPTY_STRING.equals(object) || 0 == Integer.parseInt(object.toString()));
+        return null != object && (!SystemConstant.EMPTY_STRING.equals(object) || 0 != Integer.parseInt(object.toString()));
     }
 }

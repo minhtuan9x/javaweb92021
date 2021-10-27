@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Repository
 public class BuildingJDBCImpl implements BuildingJDBC {
@@ -63,109 +64,95 @@ public class BuildingJDBCImpl implements BuildingJDBC {
         return buildingEntities;
     }
 
-    public Map<String,String> buildQueryWithJoin(BuildingSearchRequest buildingSearchRequest) {
-        Map<String,String> result = new HashMap<>();
-        StringBuilder join = new StringBuilder();
-        StringBuilder query = new StringBuilder();
-        if (!CheckInputUtil.isNull(buildingSearchRequest.getDistrictCode())) {
-            join.append("\ninner join district as b on a.districtid = b.id ");
-        }
-        if (!CheckInputUtil.isNull(buildingSearchRequest.getRentAreaFrom()) || !CheckInputUtil.isNull(buildingSearchRequest.getRentAreaTo())) {
+    public void buildQueryWithJoin(BuildingSearchRequest buildingSearchRequest, StringBuilder join, StringBuilder where) {
+
+
+        if (CheckInputUtil.isValid(buildingSearchRequest.getRentAreaFrom()) || CheckInputUtil.isValid(buildingSearchRequest.getRentAreaTo())) {
             join.append("\ninner join rentarea as c on a.id = c.buildingid ");
+            if (CheckInputUtil.isValid(buildingSearchRequest.getRentAreaTo())) {
+                where.append("\nand c.value <= " + buildingSearchRequest.getRentAreaTo() + " ");
+            }
+            if (CheckInputUtil.isValid(buildingSearchRequest.getRentAreaFrom())) {
+                where.append("\nand c.value >= " + buildingSearchRequest.getRentAreaFrom() + " ");
+            }
         }
+
+        if (CheckInputUtil.isValid(buildingSearchRequest.getDistrictCode())) {
+            join.append("\ninner join district as b on a.districtid = b.id ");
+            where.append("\nand b.code ='" + buildingSearchRequest.getDistrictCode() + "' ");
+        }
+
+        if (CheckInputUtil.isValid(buildingSearchRequest.getStaffID())) {
+            join.append("\ninner join assignmentbuilding as f on a.id = f.buildingid inner join user as g on f.staffid = g.id ");
+            where.append("\nand g.id = " + buildingSearchRequest.getStaffID());
+        }
+
         if (buildingSearchRequest.getRentTypes() != null && buildingSearchRequest.getRentTypes().size() > 0) {
             join.append("\ninner join buildingrenttype as d on a.id = d.buildingid \ninner join renttype as e on e.id = d.renttypeid ");
+
+            String queryTypes = buildingSearchRequest.getRentTypes()
+                    .stream()
+                    .map(i -> "'" + i + "'")
+                    .collect(Collectors.joining(","));
+            where.append("\nand e.code in (").append(queryTypes).append(")");
         }
 
-        if (!CheckInputUtil.isNull(buildingSearchRequest.getStaffID())) {
-            join.append("\ninner join assignmentbuilding as f on a.id = f.buildingid inner join user as g on f.staffid = g.id ");
-        }
-
-        result.put("join",join.toString());
-
-        if (!CheckInputUtil.isNull(buildingSearchRequest.getDistrictCode())) {
-            query.append("\nand b.code ='" + buildingSearchRequest.getDistrictCode() + "' ");
-        }
-
-        if (!CheckInputUtil.isNull(buildingSearchRequest.getRentAreaTo())) {
-            query.append("\nand c.value <= " + buildingSearchRequest.getRentAreaTo() + " ");
-        }
-        if (!CheckInputUtil.isNull(buildingSearchRequest.getRentAreaFrom())) {
-            query.append("\nand c.value >= " + buildingSearchRequest.getRentAreaFrom() + " ");
-        }
-
-        if (buildingSearchRequest.getRentTypes() != null && buildingSearchRequest.getRentTypes().size() > 0) {
-            query.append("\nand e.code in ('"
-                    +buildingSearchRequest.getRentTypes().toString()
-                    .replace("[","")
-                    .replace("]","")
-                    .replace(",","','")
-                    +"') ");
-        }
-        if (!CheckInputUtil.isNull(buildingSearchRequest.getStaffID())) {
-            query.append("\nand g.id = " + buildingSearchRequest.getStaffID());
-        }
-        result.put("query",query.toString());
-        return result;
     }
 
-    public String buildQueryWithoutJoin(BuildingSearchRequest buildingSearchRequest){
-        StringBuilder query = new StringBuilder();
-        if (!CheckInputUtil.isNull(buildingSearchRequest.getBuildingName())) {
-            query.append("\nand a.name like '%" + buildingSearchRequest.getBuildingName() + "%'");
+    public void buildQueryWithoutJoin(BuildingSearchRequest buildingSearchRequest, StringBuilder where) {
+        if (CheckInputUtil.isValid(buildingSearchRequest.getBuildingName())) {
+            where.append("\nand a.name like '%" + buildingSearchRequest.getBuildingName() + "%'");
         }
-        if (!CheckInputUtil.isNull(buildingSearchRequest.getFloorArea())) {
-            query.append("\nand a.floorarea = " + buildingSearchRequest.getFloorArea());
+        if (CheckInputUtil.isValid(buildingSearchRequest.getFloorArea())) {
+            where.append("\nand a.floorarea = " + buildingSearchRequest.getFloorArea());
         }
-
-
-        if (!CheckInputUtil.isNull(buildingSearchRequest.getWard())) {
-            query.append("\nand a.ward like '%" + buildingSearchRequest.getWard() + "%' ");
+        if (CheckInputUtil.isValid(buildingSearchRequest.getWard())) {
+            where.append("\nand a.ward like '%" + buildingSearchRequest.getWard() + "%' ");
         }
 
-        if (!CheckInputUtil.isNull(buildingSearchRequest.getStreet())) {
-            query.append("\nand a.street like '%" + buildingSearchRequest.getStreet() + "%' ");
+        if (CheckInputUtil.isValid(buildingSearchRequest.getStreet())) {
+            where.append("\nand a.street like '%" + buildingSearchRequest.getStreet() + "%' ");
         }
 
-        if (!CheckInputUtil.isNull(buildingSearchRequest.getNumberOfBasement())) {
-            query.append("\nand a.numberofbasement = " + buildingSearchRequest.getNumberOfBasement() + " ");
+        if (CheckInputUtil.isValid(buildingSearchRequest.getNumberOfBasement())) {
+            where.append("\nand a.numberofbasement = " + buildingSearchRequest.getNumberOfBasement() + " ");
         }
 
-        if (!CheckInputUtil.isNull(buildingSearchRequest.getDirection())) {
-            query.append("\nand a.direction ='" + buildingSearchRequest.getDirection() + "' ");
+        if (CheckInputUtil.isValid(buildingSearchRequest.getDirection())) {
+            where.append("\nand a.direction ='" + buildingSearchRequest.getDirection() + "' ");
         }
 
-        if (!CheckInputUtil.isNull(buildingSearchRequest.getLevel())) {
-            query.append("\nand a.level ='" + buildingSearchRequest.getLevel() + "' ");
+        if (CheckInputUtil.isValid(buildingSearchRequest.getLevel())) {
+            where.append("\nand a.level ='" + buildingSearchRequest.getLevel() + "' ");
         }
 
 
-        if (!CheckInputUtil.isNull(buildingSearchRequest.getRentPriceTo())) {
-            query.append("\nand a.rentprice <= " + buildingSearchRequest.getRentPriceTo() + " ");
+        if (CheckInputUtil.isValid(buildingSearchRequest.getRentPriceTo())) {
+            where.append("\nand a.rentprice <= " + buildingSearchRequest.getRentPriceTo() + " ");
         }
-        if (!CheckInputUtil.isNull(buildingSearchRequest.getRentPriceFrom())) {
-            query.append("\nand a.rentprice >= " + buildingSearchRequest.getRentPriceFrom() + " ");
-        }
-
-        if (!CheckInputUtil.isNull(buildingSearchRequest.getManagerName())) {
-            query.append("\nand a.managername like '%" + buildingSearchRequest.getManagerName() + "%'");
+        if (CheckInputUtil.isValid(buildingSearchRequest.getRentPriceFrom())) {
+            where.append("\nand a.rentprice >= " + buildingSearchRequest.getRentPriceFrom() + " ");
         }
 
-        if (!CheckInputUtil.isNull(buildingSearchRequest.getManagerPhone())) {
-            query.append("\nand a.managerphone like '%" + buildingSearchRequest.getManagerPhone() + "%'");
+        if (CheckInputUtil.isValid(buildingSearchRequest.getManagerName())) {
+            where.append("\nand a.managername like '%" + buildingSearchRequest.getManagerName() + "%'");
         }
 
-        return query.toString();
+        if (CheckInputUtil.isValid(buildingSearchRequest.getManagerPhone())) {
+            where.append("\nand a.managerphone like '%" + buildingSearchRequest.getManagerPhone() + "%'");
+        }
     }
+
     public String buildQuery(BuildingSearchRequest buildingSearchRequest) {
-        StringBuilder sql = new StringBuilder("select * from building as a ");
-        sql.append(buildQueryWithJoin(buildingSearchRequest).get("join"));
-        sql.append("where 1=1 ");
-        sql.append(buildQueryWithJoin(buildingSearchRequest).get("query"));
-        sql.append(buildQueryWithoutJoin(buildingSearchRequest));
-        sql.append("\ngroup by a.id");
+        StringBuilder queryFinal = new StringBuilder("select * from building as a ");
+        StringBuilder join = new StringBuilder("");
+        StringBuilder where = new StringBuilder("where 1=1 ");
+        buildQueryWithJoin(buildingSearchRequest, join, where);
+        buildQueryWithoutJoin(buildingSearchRequest, where);
+        where.append("\ngroup by a.id");
+        queryFinal.append(join).append(where);
         System.out.println("===================================");
-        System.out.println(sql.toString());
-        return sql.toString();
+        System.out.println(queryFinal.toString());
+        return queryFinal.toString();
     }
 }
