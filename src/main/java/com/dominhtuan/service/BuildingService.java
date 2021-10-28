@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 public interface BuildingService {
-    List<BuildingSearchResponse> findBuilding(BuildingSearchRequest buildingSearchRequest) throws SQLException;
+    List<BuildingSearchResponse> findBuilding(Map<String, Object> params, List<String> rentTypes) throws SQLException;
     void save(BuildingDTO buildingDTO);
-    BuildingSearchRequest getBuildingSearchRequest(Map<String,Object> params,List<String> rentTypes);
 }

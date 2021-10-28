@@ -22,8 +22,7 @@ public class BuildingAPI {
             @RequestParam(required = false) Map<String, Object> params,
             @RequestParam(required = false) List<String> rentTypes
     ) throws SQLException {
-        BuildingSearchRequest buildingSearchRequest = buildingService.getBuildingSearchRequest(params,rentTypes);
-        List<BuildingSearchResponse> buildingResponses = buildingService.findBuilding(buildingSearchRequest);
+        List<BuildingSearchResponse> buildingResponses = buildingService.findBuilding(params,rentTypes);
         return buildingResponses;
     }
 

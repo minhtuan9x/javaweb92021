@@ -4,6 +4,7 @@ import com.dominhtuan.convert.BuildingConverter;
 import com.dominhtuan.dto.BuildingDTO;
 import com.dominhtuan.dto.request.BuildingSearchRequest;
 import com.dominhtuan.dto.response.BuildingSearchResponse;
+import com.dominhtuan.entity.BuildingEntity;
 import com.dominhtuan.entity.DistrictEntity;
 import com.dominhtuan.exception.YeuDiemPhucException;
 import com.dominhtuan.jdbc.BuildingJDBC;
@@ -28,28 +29,30 @@ public class BuildingServiceImpl implements BuildingService {
     private BuildingConverter buildingConverter;
 
     @Override
-    public List<BuildingSearchResponse> findBuilding(BuildingSearchRequest buildingSearchRequest) throws SQLException {
+    public List<BuildingSearchResponse> findBuilding(Map<String, Object> params, List<String> rentTypes) throws SQLException {
         List<BuildingSearchResponse> buildingResponses = new ArrayList<>();
+        BuildingSearchRequest buildingSearchRequest = getBuildingSearchRequest(params,rentTypes);
         validateNameInput(buildingSearchRequest);
-        buildingJDBC.findBuilding(buildingSearchRequest).forEach(item ->{
-            DistrictEntity districtEntity = null;
-            try {
-                districtEntity = districtJDBC.findDistrictByDistrictID(item.getDistrictID());
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+
+        for (BuildingEntity item : buildingJDBC.findBuilding(buildingSearchRequest)) {
+            DistrictEntity districtEntity = districtJDBC.findDistrictByDistrictID(item.getDistrictID());
             String districtName = districtEntity.getName();
             BuildingSearchResponse buildingResponse = buildingConverter.buildingEntityToBuildingResponse(item, districtName);
             buildingResponses.add(buildingResponse);
-        });
+        }
 
-//        for (BuildingEntity item : buildingJDBC.findBuilding(buildingSearchRequest)) {
-//            DistrictEntity districtEntity = districtJDBC.findDistrictByDistrictID(item.getDistrictID());
+//        buildingJDBC.findBuilding(buildingSearchRequest).forEach(item ->{
+//            DistrictEntity districtEntity = null;
+//            try {
+//                districtEntity = districtJDBC.findDistrictByDistrictID(item.getDistrictID());
+//            } catch (SQLException e) {
+//                e.printStackTrace();
+//            }
 //            String districtName = districtEntity.getName();
 //            BuildingSearchResponse buildingResponse = buildingConverter.buildingEntityToBuildingResponse(item, districtName);
 //            buildingResponses.add(buildingResponse);
-//        }
-//
+//        });
+
         return buildingResponses;
     }
 
@@ -58,7 +61,6 @@ public class BuildingServiceImpl implements BuildingService {
 
     }
 
-    @Override
     public BuildingSearchRequest getBuildingSearchRequest(Map<String, Object> params, List<String> rentTypes) {
         BuildingSearchRequest buildingSearchRequest = new BuildingSearchRequest();
         try {
