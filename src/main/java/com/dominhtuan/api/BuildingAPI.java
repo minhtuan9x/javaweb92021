@@ -1,7 +1,6 @@
 package com.dominhtuan.api;
 
 import com.dominhtuan.dto.BuildingDTO;
-import com.dominhtuan.dto.request.BuildingSearchRequest;
 import com.dominhtuan.dto.response.BuildingSearchResponse;
 import com.dominhtuan.service.BuildingService;
 import org.springframework.beans.factory.annotation.Autowired;

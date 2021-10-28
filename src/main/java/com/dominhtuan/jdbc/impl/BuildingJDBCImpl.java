@@ -151,6 +151,8 @@ public class BuildingJDBCImpl implements BuildingJDBC {
     }
 
     public String buildQuery(BuildingSearchRequest buildingSearchRequest) {
+
+
         StringBuilder queryFinal = new StringBuilder("select bd.id,bd.name,bd.street,bd.ward,bd.districtid,bd.managername," +
                 "bd.managerphone,bd.floorarea,bd.rentpricedescription,bd.rentprice,bd.servicefee from building as bd ");
         StringBuilder join = new StringBuilder("\ninner join district as dt on bd.districtid = dt.id ");

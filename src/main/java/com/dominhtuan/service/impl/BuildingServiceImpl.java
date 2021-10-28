@@ -31,7 +31,7 @@ public class BuildingServiceImpl implements BuildingService {
     @Override
     public List<BuildingSearchResponse> findBuilding(Map<String, Object> params, List<String> rentTypes) throws SQLException {
         List<BuildingSearchResponse> buildingResponses = new ArrayList<>();
-        BuildingSearchRequest buildingSearchRequest = getBuildingSearchRequest(params,rentTypes);
+        BuildingSearchRequest buildingSearchRequest = getBuildingSearchRequest(params, rentTypes);
         validateNameInput(buildingSearchRequest);
 
         for (BuildingEntity item : buildingJDBC.findBuilding(buildingSearchRequest)) {
@@ -40,19 +40,6 @@ public class BuildingServiceImpl implements BuildingService {
             BuildingSearchResponse buildingResponse = buildingConverter.buildingEntityToBuildingResponse(item, districtName);
             buildingResponses.add(buildingResponse);
         }
-
-//        buildingJDBC.findBuilding(buildingSearchRequest).forEach(item ->{
-//            DistrictEntity districtEntity = null;
-//            try {
-//                districtEntity = districtJDBC.findDistrictByDistrictID(item.getDistrictID());
-//            } catch (SQLException e) {
-//                e.printStackTrace();
-//            }
-//            String districtName = districtEntity.getName();
-//            BuildingSearchResponse buildingResponse = buildingConverter.buildingEntityToBuildingResponse(item, districtName);
-//            buildingResponses.add(buildingResponse);
-//        });
-
         return buildingResponses;
     }
 
