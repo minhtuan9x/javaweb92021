@@ -56,9 +56,12 @@ public class BuildingJDBCImpl implements BuildingJDBC {
             System.out.println("Loi jdbc");
             e.printStackTrace();
         } finally {
-            conn.close();
-            rs.close();
-            stmt.close();
+            if (conn != null)
+                conn.close();
+            if (rs != null)
+                rs.close();
+            if (stmt != null)
+                stmt.close();
         }
 
         return buildingEntities;

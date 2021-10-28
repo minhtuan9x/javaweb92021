@@ -1,7 +1,6 @@
 package com.dominhtuan.service;
 
 import com.dominhtuan.dto.BuildingDTO;
-import com.dominhtuan.dto.request.BuildingSearchRequest;
 import com.dominhtuan.dto.response.BuildingSearchResponse;
 
 import java.sql.SQLException;
