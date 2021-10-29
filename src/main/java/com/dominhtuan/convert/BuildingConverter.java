@@ -15,15 +15,6 @@ public class BuildingConverter {
     public BuildingSearchResponse buildingEntityToBuildingResponse(BuildingEntity buildingEntity, String districtName){
         BuildingSearchResponse buildingResponse = modelMapper.map(buildingEntity,BuildingSearchResponse.class);
         buildingResponse.setAddress(buildingEntity.getStreet()+"-"+buildingEntity.getWard()+"-"+districtName);
-//        buildingResponse.setName(buildingEntity.getName());
-//        buildingResponse.setFloorArea(buildingEntity.getFloorArea());
-//        buildingResponse.setManagerName(buildingEntity.getManagerName());
-//        buildingResponse.setManagerPhone(buildingEntity.getManagerPhone());
-//        buildingResponse.setFloorArea(buildingEntity.getFloorArea());
-//        buildingResponse.setServiceFee(buildingEntity.getServiceFee());
-//        buildingResponse.setRentPriceDescription(buildingEntity.getRentPriceDescription());
-//        buildingResponse.setRentPrice(buildingEntity.getRentPrice());
-
         return buildingResponse;
     }
 }
