@@ -3,9 +3,8 @@ package com.dominhtuan.jdbc.impl;
 import com.dominhtuan.dto.request.BuildingSearchRequest;
 import com.dominhtuan.entity.BuildingEntity;
 import com.dominhtuan.jdbc.BuildingJDBC;
-import com.dominhtuan.util.CheckInputUtil;
 import com.dominhtuan.util.ConnectDBUtil;
-import jdk.nashorn.internal.scripts.JO;
+import com.dominhtuan.util.SqlUtil;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
@@ -13,10 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Repository
 public class BuildingJDBCImpl implements BuildingJDBC {
@@ -63,41 +59,17 @@ public class BuildingJDBCImpl implements BuildingJDBC {
             if (stmt != null)
                 stmt.close();
         }
-
         return buildingEntities;
     }
 
     public void buildQueryWithJoin(BuildingSearchRequest buildingSearchRequest, StringBuilder join, StringBuilder where) {
-
-
-        if (CheckInputUtil.isValid(buildingSearchRequest.getRentAreaFrom()) || CheckInputUtil.isValid(buildingSearchRequest.getRentAreaTo())) {
-            join.append("\ninner join rentarea as ra on bd.id = ra.buildingid ");
-            if (CheckInputUtil.isValid(buildingSearchRequest.getRentAreaTo())) {
-                where.append("\nand ra.value <= " + buildingSearchRequest.getRentAreaTo() + " ");
-            }
-            if (CheckInputUtil.isValid(buildingSearchRequest.getRentAreaFrom())) {
-                where.append("\nand ra.value >= " + buildingSearchRequest.getRentAreaFrom() + " ");
-            }
-        }
-
-        if (CheckInputUtil.isValid(buildingSearchRequest.getDistrictCode())) {
-            where.append("\nand dt.code ='" + buildingSearchRequest.getDistrictCode() + "' ");
-        }
-
-        if (CheckInputUtil.isValid(buildingSearchRequest.getStaffID())) {
-            join.append("\ninner join assignmentbuilding as ab on bd.id = ab.buildingid inner join user as u on ab.staffid = u.id ");
-            where.append("\nand g.id = " + buildingSearchRequest.getStaffID());
-        }
-
+        SqlUtil.buildQueryUsingBetween("ra.value",buildingSearchRequest.getRentAreaFrom(), buildingSearchRequest.getRentAreaTo(), where,join,
+                "\ninner join rentarea as ra on bd.id = ra.buildingid ");
+        SqlUtil.buildQueryUsingOperator("dt.code","=",buildingSearchRequest.getDistrictCode(),where);
+        SqlUtil.buildQueryUsingOperator("u.id","=",buildingSearchRequest.getStaffID(),where,join,
+                "\ninner join assignmentbuilding as ab on bd.id = ab.buildingid inner join user as u on ab.staffid = u.id ");
         if (buildingSearchRequest.getRentTypes() != null && buildingSearchRequest.getRentTypes().size() > 0) {
             join.append("\ninner join buildingrenttype as br on bd.id = br.buildingid \ninner join renttype as rt on rt.id = br.renttypeid ");
-
-//            String queryTypes = buildingSearchRequest.getRentTypes()
-//                    .stream()
-//                    .map(i -> "'" + i + "'")
-//                    .collect(Collectors.joining(","));
-//            where.append("\nand e.code in (").append(queryTypes).append(")");
-
             List<String> buildingTypes = new ArrayList<>();
             for (String type : buildingSearchRequest.getRentTypes()) {
                 buildingTypes.add("'" + type + "'");
@@ -106,51 +78,19 @@ public class BuildingJDBCImpl implements BuildingJDBC {
                     .append(String.join(",", buildingTypes))
                     .append(")");
         }
-
     }
 
     public void buildQueryWithoutJoin(BuildingSearchRequest buildingSearchRequest, StringBuilder where) {
-        if (CheckInputUtil.isValid(buildingSearchRequest.getBuildingName())) {
-            where.append("\nand bd.name like '%" + buildingSearchRequest.getBuildingName() + "%'");
-        }
-        if (CheckInputUtil.isValid(buildingSearchRequest.getFloorArea())) {
-            where.append("\nand bd.floorarea = " + buildingSearchRequest.getFloorArea());
-        }
-        if (CheckInputUtil.isValid(buildingSearchRequest.getWard())) {
-            where.append("\nand bd.ward like '%" + buildingSearchRequest.getWard() + "%' ");
-        }
-
-        if (CheckInputUtil.isValid(buildingSearchRequest.getStreet())) {
-            where.append("\nand bd.street like '%" + buildingSearchRequest.getStreet() + "%' ");
-        }
-
-        if (CheckInputUtil.isValid(buildingSearchRequest.getNumberOfBasement())) {
-            where.append("\nand bd.numberofbasement = " + buildingSearchRequest.getNumberOfBasement() + " ");
-        }
-
-        if (CheckInputUtil.isValid(buildingSearchRequest.getDirection())) {
-            where.append("\nand bd.direction ='" + buildingSearchRequest.getDirection() + "' ");
-        }
-
-        if (CheckInputUtil.isValid(buildingSearchRequest.getLevel())) {
-            where.append("\nand bd.level ='" + buildingSearchRequest.getLevel() + "' ");
-        }
-
-
-        if (CheckInputUtil.isValid(buildingSearchRequest.getRentPriceTo())) {
-            where.append("\nand bd.rentprice <= " + buildingSearchRequest.getRentPriceTo() + " ");
-        }
-        if (CheckInputUtil.isValid(buildingSearchRequest.getRentPriceFrom())) {
-            where.append("\nand bd.rentprice >= " + buildingSearchRequest.getRentPriceFrom() + " ");
-        }
-
-        if (CheckInputUtil.isValid(buildingSearchRequest.getManagerName())) {
-            where.append("\nand bd.managername like '%" + buildingSearchRequest.getManagerName() + "%'");
-        }
-
-        if (CheckInputUtil.isValid(buildingSearchRequest.getManagerPhone())) {
-            where.append("\nand bd.managerphone like '%" + buildingSearchRequest.getManagerPhone() + "%'");
-        }
+        SqlUtil.buildQueryUsingLike("bd.name", buildingSearchRequest.getBuildingName(), where);
+        SqlUtil.buildQueryUsingOperator("bd.floorarea", "=", buildingSearchRequest.getFloorArea(), where);
+        SqlUtil.buildQueryUsingLike("bd.ward", buildingSearchRequest.getWard(), where);
+        SqlUtil.buildQueryUsingLike("bd.street", buildingSearchRequest.getStreet(), where);
+        SqlUtil.buildQueryUsingOperator("bd.numberofbasement", "=", buildingSearchRequest.getNumberOfBasement(), where);
+        SqlUtil.buildQueryUsingOperator("bd.direction", "=", buildingSearchRequest.getDirection(), where);
+        SqlUtil.buildQueryUsingOperator("bd.level", "=", buildingSearchRequest.getLevel(), where);
+        SqlUtil.buildQueryUsingLike("bd.managername", buildingSearchRequest.getManagerName(), where);
+        SqlUtil.buildQueryUsingLike("bd.managerphone", buildingSearchRequest.getManagerPhone(), where);
+        SqlUtil.buildQueryUsingBetween("bd.rentprice",buildingSearchRequest.getRentPriceFrom(), buildingSearchRequest.getRentPriceTo(),where);
     }
 
     public String buildQuery(BuildingSearchRequest buildingSearchRequest) {

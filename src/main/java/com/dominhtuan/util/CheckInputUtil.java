@@ -5,19 +5,14 @@ import com.dominhtuan.constant.SystemConstant;
 public class CheckInputUtil {
 
     public static boolean isNull(String str) {
-        if (str == null || str.equals(SystemConstant.EMPTY_STRING)) {
-            return true;
-        }
-        return false;
+        return str == null || str.equals(SystemConstant.EMPTY_STRING);
     }
 
     public static boolean isNull(Integer num) {
-        if (num == null || num == 0) {
-            return true;
-        }
-        return false;
+        return num == null || num == 0;
     }
+
     public static boolean isValid(Object object) {
-        return null != object && (!SystemConstant.EMPTY_STRING.equals(object) || 0 != Integer.parseInt(object.toString()));
+        return (object != null && (!object.equals(SystemConstant.EMPTY_STRING) || Integer.parseInt(object.toString()) != 0));
     }
 }
