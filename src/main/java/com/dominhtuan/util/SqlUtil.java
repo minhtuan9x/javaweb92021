@@ -24,8 +24,8 @@ public class SqlUtil {
     public static void buildQueryUsingOperator(String column, String operator, Object value, StringBuilder where, StringBuilder join, String joinQuery) {
         if (CheckInputUtil.isValid(value)) {
             join.append(joinQuery);
-            String valueProcessed = (value instanceof String) ? ("'" + value.toString() + "'") : (value.toString());
-            where.append(String.format("\nand %s %s %s", column, operator, valueProcessed));
+            String valuePsd = (value instanceof String) ? ("'" + value.toString() + "'") : (value.toString());
+            where.append(String.format("\nand %s %s %s", column, operator, valuePsd));
         }
     }
 
