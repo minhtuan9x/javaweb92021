@@ -9,12 +9,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class BuildingConverter {
 
-    @Autowired
-    private ModelMapper modelMapper;
+	@Autowired
+	private ModelMapper modelMapper;
 
-    public BuildingSearchResponse buildingEntityToBuildingResponse(BuildingEntity buildingEntity, String districtName){
-        BuildingSearchResponse buildingResponse = modelMapper.map(buildingEntity,BuildingSearchResponse.class);
-        buildingResponse.setAddress(buildingEntity.getStreet()+"-"+buildingEntity.getWard()+"-"+districtName);
-        return buildingResponse;
-    }
+	public BuildingSearchResponse buildingEntityToBuildingResponse(BuildingEntity buildingEntity, String districtName) {
+		BuildingSearchResponse buildingResponse = modelMapper.map(buildingEntity, BuildingSearchResponse.class);
+		buildingResponse.setAddress(buildingEntity.getStreet() + "-" + buildingEntity.getWard() + "-" + districtName);
+		return buildingResponse;
+	}
 }

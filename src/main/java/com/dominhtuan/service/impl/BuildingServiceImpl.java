@@ -21,73 +21,74 @@ import java.util.Map;
 
 @Service
 public class BuildingServiceImpl implements BuildingService {
-    @Autowired
-    private BuildingJDBC buildingJDBC;
-    @Autowired
-    private DistrictJDBC districtJDBC;
-    @Autowired
-    private BuildingConverter buildingConverter;
+	@Autowired
+	private BuildingJDBC buildingJDBC;
+	@Autowired
+	private DistrictJDBC districtJDBC;
+	@Autowired
+	private BuildingConverter buildingConverter;
 
-    @Override
-    public List<BuildingSearchResponse> findBuilding(Map<String, Object> params, List<String> rentTypes) throws SQLException {
-        List<BuildingSearchResponse> buildingResponses = new ArrayList<>();
-        BuildingSearchRequest buildingSearchRequest = getBuildingSearchRequest(params, rentTypes);
-        validateNameInput(buildingSearchRequest);
+	@Override
+	public List<BuildingSearchResponse> findBuilding(Map<String, Object> params, List<String> rentTypes)
+			throws SQLException {
+		List<BuildingSearchResponse> buildingResponses = new ArrayList<>();
+		BuildingSearchRequest buildingSearchRequest = getBuildingSearchRequest(params, rentTypes);
+		validateNameInput(buildingSearchRequest);
 
-        for (BuildingEntity item : buildingJDBC.findBuilding(buildingSearchRequest)) {
-            DistrictEntity districtEntity = districtJDBC.findDistrictByDistrictID(item.getDistrictID());
-            String districtName = districtEntity.getName();
-            BuildingSearchResponse buildingResponse = buildingConverter.buildingEntityToBuildingResponse(item, districtName);
-            buildingResponses.add(buildingResponse);
-        }
-        return buildingResponses;
-    }
+		for (BuildingEntity item : buildingJDBC.findBuilding(buildingSearchRequest)) {
+			DistrictEntity districtEntity = districtJDBC.findDistrictByDistrictID(item.getDistrictID());
+			String districtName = districtEntity.getName();
+			BuildingSearchResponse buildingResponse = buildingConverter.buildingEntityToBuildingResponse(item,
+					districtName);
+			buildingResponses.add(buildingResponse);
+		}
+		return buildingResponses;
+	}
 
-    @Override
-    public void save(BuildingDTO buildingDTO) {
+	@Override
+	public void save(BuildingDTO buildingDTO) {
 
-    }
+	}
 
-    public BuildingSearchRequest getBuildingSearchRequest(Map<String, Object> params, List<String> rentTypes) {
-        BuildingSearchRequest buildingSearchRequest = new BuildingSearchRequest();
-        try {
-            buildingSearchRequest.setBuildingName((String) ParseValidateUtil.parseValidate(params.get("name")));
-            buildingSearchRequest.setDistrictCode((String) ParseValidateUtil.parseValidate(params.get("districtCode")));
-            buildingSearchRequest.setWard((String) ParseValidateUtil.parseValidate(params.get("ward")));
-            buildingSearchRequest.setStreet((String) ParseValidateUtil.parseValidate(params.get("street")));
-            buildingSearchRequest.setDirection((String) ParseValidateUtil.parseValidate(params.get("direction")));
-            buildingSearchRequest.setLevel((String) ParseValidateUtil.parseValidate(params.get("level")));
-            buildingSearchRequest.setManagerName((String) ParseValidateUtil.parseValidate(params.get("managerName")));
-            buildingSearchRequest.setManagerPhone((String) ParseValidateUtil.parseValidate(params.get("managerPhone")));
+	public BuildingSearchRequest getBuildingSearchRequest(Map<String, Object> params, List<String> rentTypes) {
+		BuildingSearchRequest buildingSearchRequest = new BuildingSearchRequest();
+		try {
+			buildingSearchRequest.setBuildingName((String) ParseValidateUtil.parseValidate(params.get("name")));
+			buildingSearchRequest.setDistrictCode((String) ParseValidateUtil.parseValidate(params.get("districtCode")));
+			buildingSearchRequest.setWard((String) ParseValidateUtil.parseValidate(params.get("ward")));
+			buildingSearchRequest.setStreet((String) ParseValidateUtil.parseValidate(params.get("street")));
+			buildingSearchRequest.setDirection((String) ParseValidateUtil.parseValidate(params.get("direction")));
+			buildingSearchRequest.setLevel((String) ParseValidateUtil.parseValidate(params.get("level")));
+			buildingSearchRequest.setManagerName((String) ParseValidateUtil.parseValidate(params.get("managerName")));
+			buildingSearchRequest.setManagerPhone((String) ParseValidateUtil.parseValidate(params.get("managerPhone")));
 
-            buildingSearchRequest.setRentTypes(rentTypes);
+			buildingSearchRequest.setRentTypes(rentTypes);
 
-            buildingSearchRequest.setFloorArea((Integer) ParseValidateUtil.parseValidate(params.get("floorArea")));
-            buildingSearchRequest.setNumberOfBasement((Integer) ParseValidateUtil.parseValidate(params.get("numberOfBasement")));
-            buildingSearchRequest.setRentAreaFrom((Integer) ParseValidateUtil.parseValidate(params.get("rentAreaFrom")));
-            buildingSearchRequest.setRentAreaTo((Integer) ParseValidateUtil.parseValidate(params.get("rentAreaTo")));
-            buildingSearchRequest.setRentPriceFrom((Integer) ParseValidateUtil.parseValidate(params.get("rentPriceFrom")));
-            buildingSearchRequest.setRentPriceTo((Integer) ParseValidateUtil.parseValidate(params.get("rentPriceTo")));
-            buildingSearchRequest.setStaffID((Integer) ParseValidateUtil.parseValidate(params.get("staffID")));
-        } catch (Exception e) {
-            System.out.println("Loi getBuildingSearchRequest");
-            e.printStackTrace();
-        }
-        return buildingSearchRequest;
-    }
+			buildingSearchRequest.setFloorArea((Integer) ParseValidateUtil.parseValidate(params.get("floorArea")));
+			buildingSearchRequest.setNumberOfBasement((Integer) ParseValidateUtil.parseValidate(params.get("numberOfBasement")));
+			buildingSearchRequest.setRentAreaFrom((Integer) ParseValidateUtil.parseValidate(params.get("rentAreaFrom")));
+			buildingSearchRequest.setRentAreaTo((Integer) ParseValidateUtil.parseValidate(params.get("rentAreaTo")));
+			buildingSearchRequest.setRentPriceFrom((Integer) ParseValidateUtil.parseValidate(params.get("rentPriceFrom")));
+			buildingSearchRequest.setRentPriceTo((Integer) ParseValidateUtil.parseValidate(params.get("rentPriceTo")));
+			buildingSearchRequest.setStaffID((Integer) ParseValidateUtil.parseValidate(params.get("staffID")));
+		} catch (Exception e) {
+			System.out.println("Loi getBuildingSearchRequest");
+			e.printStackTrace();
+		}
+		return buildingSearchRequest;
+	}
 
+	private void validateNameInput(BuildingSearchRequest buildingSearchRequest) {
+		try {
+			if (buildingSearchRequest.getBuildingName() != null) {
+				if (buildingSearchRequest.getBuildingName().equals("yeu diem phuc")) {
+					throw new YeuDiemPhucException("Ahihi đồ ngốc");
+				}
+			}
+		} catch (YeuDiemPhucException e) {
+			throw e;
+		}
 
-    private void validateNameInput(BuildingSearchRequest buildingSearchRequest) {
-        try {
-            if (buildingSearchRequest.getBuildingName() != null) {
-                if (buildingSearchRequest.getBuildingName().equals("yeu diem phuc")) {
-                    throw new YeuDiemPhucException("Ahihi đồ ngốc");
-                }
-            }
-        } catch (YeuDiemPhucException e) {
-            throw e;
-        }
-
-    }
+	}
 
 }

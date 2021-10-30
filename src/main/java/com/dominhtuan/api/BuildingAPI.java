@@ -12,32 +12,30 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/building")
 public class BuildingAPI {
-    @Autowired
-    private BuildingService buildingService;
+	@Autowired
+	private BuildingService buildingService;
 
-    @GetMapping
-    public List<BuildingSearchResponse> findBuilding(
-            @RequestParam(required = false) Map<String, Object> params,
-            @RequestParam(required = false) List<String> rentTypes
-    ) throws SQLException {
-        return buildingService.findBuilding(params, rentTypes);
-    }
+	@GetMapping
+	public List<BuildingSearchResponse> findBuilding(
+			@RequestParam(required = false) Map<String, Object> params,
+			@RequestParam(required = false) List<String> rentTypes) throws SQLException {
+		return buildingService.findBuilding(params, rentTypes);
+	}
 
-    @PostMapping
-    public BuildingDTO createBuilding(@RequestBody BuildingDTO buildingDTO) {
-        //buildingService.save(buildingDTO);
-        return buildingDTO;
-    }
+	@PostMapping
+	public BuildingDTO createBuilding(@RequestBody BuildingDTO buildingDTO) {
+		// buildingService.save(buildingDTO);
+		return buildingDTO;
+	}
 
-//    @GetMapping("/{id}")
-//    public BuildingDTO getDetail(@PathVariable String id) {
-//        List<BuildingDTO> buildingDTOS = createListBuilding();
-//        for (BuildingDTO item : buildingDTOS) {
-//            if (item.getName().equals(id)) {
-//                return item;
-//            }
-//        }
-//        return null;
-//    }
+	// @GetMapping("/{id}")
+	// public BuildingDTO getDetail(@PathVariable String id) {
+	// List<BuildingDTO> buildingDTOS = createListBuilding();
+	// for (BuildingDTO item : buildingDTOS) {
+	// if (item.getName().equals(id)) {
+	// return item;
+	// }
+	// }
+	// return null;
+	// }
 }
-

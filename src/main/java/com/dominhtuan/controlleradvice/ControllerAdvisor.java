@@ -11,20 +11,19 @@ import java.util.Map;
 
 @ControllerAdvice
 public class ControllerAdvisor {
-    private ResponseEntity<Map<String, Object>> mapResponseEntity;
 
-    @ExceptionHandler(ArithmeticException.class)
-    public ResponseEntity<Map<String, Object>> handleArithmeticException(ArithmeticException e) {
-        return mapResponseEntity = HandleExceptionMethodUtil.handleMethod(e, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+	@ExceptionHandler(ArithmeticException.class)
+	public ResponseEntity<Map<String, Object>> handleArithmeticException(ArithmeticException e) {
+		return HandleExceptionMethodUtil.handleMethod(e, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
 
-    @ExceptionHandler(NumberFormatException.class)
-    public ResponseEntity<Map<String, Object>> handleNumberFormatException(NumberFormatException e) {
-        return mapResponseEntity = HandleExceptionMethodUtil.handleMethod(e, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+	@ExceptionHandler(NumberFormatException.class)
+	public ResponseEntity<Map<String, Object>> handleNumberFormatException(NumberFormatException e) {
+		return HandleExceptionMethodUtil.handleMethod(e, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
 
-    @ExceptionHandler(YeuDiemPhucException.class)
-    public ResponseEntity<Map<String, Object>> handleYeuDiemPhucException(YeuDiemPhucException e) {
-        return mapResponseEntity = HandleExceptionMethodUtil.handleMethod(e, HttpStatus.PAYMENT_REQUIRED);
-    }
+	@ExceptionHandler(YeuDiemPhucException.class)
+	public ResponseEntity<Map<String, Object>> handleYeuDiemPhucException(YeuDiemPhucException e) {
+		return HandleExceptionMethodUtil.handleMethod(e, HttpStatus.PAYMENT_REQUIRED);
+	}
 }
