@@ -18,7 +18,7 @@ public class DistrictJDBCImpl implements DistrictJDBC {
 	private ConnectDBUtil connectDBUtil = new ConnectDBUtil();
 
 	@Override
-	public DistrictEntity findDistrictByDistrictID(long districtID) throws SQLException {
+	public DistrictEntity findByDistrictID(long districtID) throws SQLException {
 		DistrictEntity districtEntity = new DistrictEntity();
 		try {
 			conn = connectDBUtil.connectDB();

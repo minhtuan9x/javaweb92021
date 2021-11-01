@@ -1,5 +1,6 @@
 package com.dominhtuan.convert;
 
+import com.dominhtuan.dto.BuildingDTO;
 import com.dominhtuan.dto.response.BuildingSearchResponse;
 import com.dominhtuan.entity.BuildingEntity;
 import org.modelmapper.ModelMapper;

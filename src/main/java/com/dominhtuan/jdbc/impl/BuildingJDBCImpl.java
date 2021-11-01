@@ -51,6 +51,7 @@ public class BuildingJDBCImpl implements BuildingJDBC {
 			conn.rollback();
 			System.out.println("Loi jdbc");
 			e.printStackTrace();
+			return new ArrayList<>();
 		} finally {
 			if (conn != null)
 				conn.close();

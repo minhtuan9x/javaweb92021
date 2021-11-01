@@ -27,15 +27,4 @@ public class BuildingAPI {
 		// buildingService.save(buildingDTO);
 		return buildingDTO;
 	}
-
-	// @GetMapping("/{id}")
-	// public BuildingDTO getDetail(@PathVariable String id) {
-	// List<BuildingDTO> buildingDTOS = createListBuilding();
-	// for (BuildingDTO item : buildingDTOS) {
-	// if (item.getName().equals(id)) {
-	// return item;
-	// }
-	// }
-	// return null;
-	// }
 }

@@ -36,7 +36,7 @@ public class BuildingServiceImpl implements BuildingService {
 		validateNameInput(buildingSearchRequest);
 
 		for (BuildingEntity item : buildingJDBC.findBuilding(buildingSearchRequest)) {
-			DistrictEntity districtEntity = districtJDBC.findDistrictByDistrictID(item.getDistrictID());
+			DistrictEntity districtEntity = districtJDBC.findByDistrictID(item.getDistrictID());
 			String districtName = districtEntity.getName();
 			BuildingSearchResponse buildingResponse = buildingConverter.buildingEntityToBuildingResponse(item,
 					districtName);
