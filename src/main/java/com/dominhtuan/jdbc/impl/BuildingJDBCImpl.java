@@ -65,9 +65,13 @@ public class BuildingJDBCImpl implements BuildingJDBC {
 
 	public void buildQueryWithJoin(BuildingSearchRequest buildingSearchRequest, StringBuilder join,
 			StringBuilder where) {
-		SqlUtil.buildQueryUsingBetween("ra.value", buildingSearchRequest.getRentAreaFrom(),
+//		SqlUtil.buildQueryUsingBetween("ra.value", buildingSearchRequest.getRentAreaFrom(),
+//				buildingSearchRequest.getRentAreaTo(), where, join,
+//				"\ninner join rentarea as ra on bd.id = ra.buildingid ");
+		SqlUtil.buildQueryUsingExistsAndBetween("rentarea", "ra.value", buildingSearchRequest.getRentAreaFrom(),
 				buildingSearchRequest.getRentAreaTo(), where, join,
-				"\ninner join rentarea as ra on bd.id = ra.buildingid ");
+				"\ninner join rentarea as ra on bd.id = ra.buildingid ", "bd.id=ra.buildingid");
+
 		SqlUtil.buildQueryUsingOperator("dt.code", "=", buildingSearchRequest.getDistrictCode(), where);
 		SqlUtil.buildQueryUsingOperator("u.id", "=", buildingSearchRequest.getStaffID(), where, join,
 				"\ninner join assignmentbuilding as ab on bd.id = ab.buildingid inner join user as u on ab.staffid = u.id ");

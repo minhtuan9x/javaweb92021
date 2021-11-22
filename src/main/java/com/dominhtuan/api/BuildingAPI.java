@@ -18,7 +18,7 @@ public class BuildingAPI {
 	@GetMapping
 	public List<BuildingSearchResponse> findBuilding(
 			@RequestParam(required = false) Map<String, Object> params,
-			@RequestParam(required = false) List<String> rentTypes) throws SQLException {
+			@RequestParam(required = false,name = "renttypes") List<String> rentTypes) throws SQLException {
 		return buildingService.findBuilding(params, rentTypes);
 	}
 

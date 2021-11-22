@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -50,34 +51,42 @@ public class BuildingServiceImpl implements BuildingService {
 
 	}
 
-	public BuildingSearchRequest getBuildingSearchRequest(Map<String, Object> params, List<String> rentTypes) {
+	public BuildingSearchRequest getBuildingSearchRequest(Map<String, Object> params1, List<String> rentTypes) {
 		BuildingSearchRequest buildingSearchRequest = new BuildingSearchRequest();
+		Map<String, Object> params = toLowKey(params1);
 		try {
 			buildingSearchRequest.setBuildingName((String) ParseValidateUtil.parseValidate(params.get("name")));
-			buildingSearchRequest.setDistrictCode((String) ParseValidateUtil.parseValidate(params.get("districtCode")));
+			buildingSearchRequest.setDistrictCode((String) ParseValidateUtil.parseValidate(params.get("districtcode")));
 			buildingSearchRequest.setWard((String) ParseValidateUtil.parseValidate(params.get("ward")));
 			buildingSearchRequest.setStreet((String) ParseValidateUtil.parseValidate(params.get("street")));
 			buildingSearchRequest.setDirection((String) ParseValidateUtil.parseValidate(params.get("direction")));
 			buildingSearchRequest.setLevel((String) ParseValidateUtil.parseValidate(params.get("level")));
-			buildingSearchRequest.setManagerName((String) ParseValidateUtil.parseValidate(params.get("managerName")));
-			buildingSearchRequest.setManagerPhone((String) ParseValidateUtil.parseValidate(params.get("managerPhone")));
+			buildingSearchRequest.setManagerName((String) ParseValidateUtil.parseValidate(params.get("managername")));
+			buildingSearchRequest.setManagerPhone((String) ParseValidateUtil.parseValidate(params.get("managerphone")));
 
+			System.out.println(rentTypes);
 			buildingSearchRequest.setRentTypes(rentTypes);
 
-			buildingSearchRequest.setFloorArea((Integer) ParseValidateUtil.parseValidate(params.get("floorArea")));
-			buildingSearchRequest.setNumberOfBasement((Integer) ParseValidateUtil.parseValidate(params.get("numberOfBasement")));
-			buildingSearchRequest.setRentAreaFrom((Integer) ParseValidateUtil.parseValidate(params.get("rentAreaFrom")));
-			buildingSearchRequest.setRentAreaTo((Integer) ParseValidateUtil.parseValidate(params.get("rentAreaTo")));
-			buildingSearchRequest.setRentPriceFrom((Integer) ParseValidateUtil.parseValidate(params.get("rentPriceFrom")));
-			buildingSearchRequest.setRentPriceTo((Integer) ParseValidateUtil.parseValidate(params.get("rentPriceTo")));
-			buildingSearchRequest.setStaffID((Integer) ParseValidateUtil.parseValidate(params.get("staffID")));
+			buildingSearchRequest.setFloorArea((Integer) ParseValidateUtil.parseValidate(params.get("floorarea")));
+			buildingSearchRequest.setNumberOfBasement((Integer) ParseValidateUtil.parseValidate(params.get("numberofbasement")));
+			buildingSearchRequest.setRentAreaFrom((Integer) ParseValidateUtil.parseValidate(params.get("rentareafrom")));
+			buildingSearchRequest.setRentAreaTo((Integer) ParseValidateUtil.parseValidate(params.get("rentareato")));
+			buildingSearchRequest.setRentPriceFrom((Integer) ParseValidateUtil.parseValidate(params.get("rentpricefrom")));
+			buildingSearchRequest.setRentPriceTo((Integer) ParseValidateUtil.parseValidate(params.get("rentpriceto")));
+			buildingSearchRequest.setStaffID((Integer) ParseValidateUtil.parseValidate(params.get("staffid")));
 		} catch (Exception e) {
 			System.out.println("Loi getBuildingSearchRequest");
 			e.printStackTrace();
 		}
 		return buildingSearchRequest;
 	}
-
+	private Map<String, Object> toLowKey(Map<String, Object> params){
+		Map<String, Object> results = new HashMap<>();
+		for(Map.Entry<String,Object> item : params.entrySet()){
+			results.put(item.getKey().toLowerCase(),item.getValue());
+		}
+		return results;
+	}
 	private void validateNameInput(BuildingSearchRequest buildingSearchRequest) {
 		try {
 			if (buildingSearchRequest.getBuildingName() != null) {

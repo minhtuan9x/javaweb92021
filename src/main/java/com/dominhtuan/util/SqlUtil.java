@@ -50,4 +50,17 @@ public class SqlUtil {
 			where.append(String.format("\nand %s between %s and %s ", column, fromPsd, toPsd));
 		}
 	}
+
+	public static void buildQueryUsingExistsAndBetween(String table, String column, Object from, Object to,
+			StringBuilder where, StringBuilder join, String joinQuery, String queryFirst) {
+		if (CheckInputUtil.isValid(from) || CheckInputUtil.isValid(to)) {
+			String fromPsd = (!CheckInputUtil.isValid(from)) ? "0" : from.toString();
+			String toPsd = (!CheckInputUtil.isValid(to))
+					? String.valueOf(from instanceof Integer ? Integer.MAX_VALUE : Double.MAX_VALUE)
+					: to.toString();
+			join.append(joinQuery);
+			where.append(String.format("\nand EXISTS (select * from %s where %s and %s between %s and %s ) ", table,
+					queryFirst, column, fromPsd, toPsd));
+		}
+	}
 }
