@@ -67,12 +67,12 @@ public class BuildingServiceImpl implements BuildingService {
 	public BuildingDTO save(BuildingDTO buildingDTO) {
 		BuildingEntity buildingEntity = buildingConverter.toBuildingEntity(buildingDTO);
 		try {
-			BuildingEntity buildingEntityRes = buildingReporitory.save(buildingEntity);
+			BuildingEntity buildingEntityGetIDafterSave = buildingReporitory.save(buildingEntity);
 			if(buildingDTO.getRentArea()!=null){
-				List<RentAreaDTO> rentAreaDTOS = rentAreaConverter.toRentAreaDTOs(buildingEntityRes.getId(),buildingDTO);
+				List<RentAreaDTO> rentAreaDTOS = rentAreaConverter.toRentAreaDTOs(buildingEntityGetIDafterSave.getId(),buildingDTO);
 				rentAreaService.saveAllByBuilding(rentAreaDTOS,buildingDTO);
 			}
-			return buildingConverter.toBuildingDTO(buildingEntityRes);
+			return buildingConverter.toBuildingDTO(buildingEntityGetIDafterSave);
 		}catch (Exception e){
 			System.out.println("Error BuildingService");
 			e.printStackTrace();

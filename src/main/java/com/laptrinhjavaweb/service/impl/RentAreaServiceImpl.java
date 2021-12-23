@@ -6,6 +6,7 @@ import com.laptrinhjavaweb.dto.BuildingDTO;
 import com.laptrinhjavaweb.dto.RentAreaDTO;
 import com.laptrinhjavaweb.entity.BuildingEntity;
 import com.laptrinhjavaweb.entity.RentAreaEntity;
+import com.laptrinhjavaweb.repository.BuildingRepository;
 import com.laptrinhjavaweb.repository.RentAreaRepository;
 import com.laptrinhjavaweb.service.RentAreaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,8 @@ public class RentAreaServiceImpl implements RentAreaService {
     private RentAreaConverter rentAreaConverter;
     @Autowired
     private BuildingConverter buildingConverter;
+    @Autowired
+    private BuildingRepository buildingRepository;
     @Override
     public void saveAllByBuilding(List<RentAreaDTO> rentAreaDTOS, BuildingDTO buildingDTO) {
         List<RentAreaEntity> rentAreaEntities = new ArrayList<>();
@@ -31,11 +34,13 @@ public class RentAreaServiceImpl implements RentAreaService {
             rentAreaEntities.add(rentAreaEntity);
         }
 
-        BuildingEntity buildingEntity = buildingConverter.toBuildingEntity(buildingDTO);
-        List<RentAreaEntity> rentAreaEntitiesByBuilding = new ArrayList<>();
-        if (buildingEntity.getRentAreaEntities().size()>0){
-            rentAreaEntitiesByBuilding = rentAreaRepository.findByBuildingEntity(buildingEntity);
+        BuildingEntity buildingEntity;
+        if(buildingDTO.getId()!=null){
+            buildingEntity = buildingRepository.findById(buildingDTO.getId());
+            rentAreaRepository.saveAllByBuilding(rentAreaEntities,buildingEntity);
+        }else {
+            buildingEntity = buildingConverter.toBuildingEntity(buildingDTO);
+            rentAreaRepository.saveAllByBuilding(rentAreaEntities,buildingEntity);
         }
-        rentAreaRepository.saveAllByBuilding(rentAreaEntities,rentAreaEntitiesByBuilding);
     }
 }
