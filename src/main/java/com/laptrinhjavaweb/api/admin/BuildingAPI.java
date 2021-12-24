@@ -3,12 +3,10 @@ package com.laptrinhjavaweb.api.admin;
 
 import com.laptrinhjavaweb.dto.BuildingDTO;
 import com.laptrinhjavaweb.dto.request.AssignmentBuildingRequest;
-import com.laptrinhjavaweb.dto.request.BuildingDeleteRequest;
 import com.laptrinhjavaweb.dto.response.BuildingResponse;
 import com.laptrinhjavaweb.dto.response.StaffAssignmentResponse;
 import com.laptrinhjavaweb.service.BuildingService;
 import com.laptrinhjavaweb.service.impl.UserService;
-import com.laptrinhjavaweb.utils.ValidateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
