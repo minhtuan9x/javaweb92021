@@ -3,10 +3,12 @@ package com.laptrinhjavaweb.api.admin;
 
 import com.laptrinhjavaweb.dto.BuildingDTO;
 import com.laptrinhjavaweb.dto.request.AssignmentBuildingRequest;
+import com.laptrinhjavaweb.dto.request.BuildingDelRequest;
 import com.laptrinhjavaweb.dto.response.BuildingResponse;
 import com.laptrinhjavaweb.dto.response.StaffAssignmentResponse;
 import com.laptrinhjavaweb.service.BuildingService;
 import com.laptrinhjavaweb.service.impl.UserService;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,9 +51,13 @@ public class BuildingAPI {
         return assignmentBuildingRequest;
     }
 
-    @DeleteMapping("/{id}")
-    public Long delete(@PathVariable("id") Long id) {
-        buildingService.delete(id);
-        return id;
+    @DeleteMapping
+    public BuildingDelRequest delete(@RequestBody BuildingDelRequest buildingDelRequest){
+        buildingService.delete(buildingDelRequest);
+        return buildingDelRequest;
+    }
+    @PostMapping("/savepart2")
+    public BuildingDTO savePart2(@RequestBody BuildingDTO buildingDTO) throws NotFoundException {
+        return buildingService.savePart2(buildingDTO);
     }
 }

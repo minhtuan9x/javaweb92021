@@ -7,4 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AssignmentBuildingRepository extends JpaRepository<AssignmentBuildingEntity,Long> {
     AssignmentBuildingEntity findByBuildingEntityAndUserEntity(BuildingEntity buildingEntity, UserEntity userEntity);
+    void deleteByBuildingEntity_Id(Long buildingId);
 }

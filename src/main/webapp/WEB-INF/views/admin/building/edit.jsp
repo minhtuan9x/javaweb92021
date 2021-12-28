@@ -302,7 +302,7 @@
         data["type"] = buildingTypes;
         $.ajax({
             type: "post",
-            url: '<c:url value="/api/building"/>',
+            url: '<c:url value="/api/building/savepart2"/>',
             data: JSON.stringify(data),
             dataType: "json",//kieu du lieu tu server tra ve client
             contentType: "application/json",//kieu du lieu tu client gui ve server

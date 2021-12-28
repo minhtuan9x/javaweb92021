@@ -394,21 +394,22 @@
         $.each($("input[name='checkBuildings[]']:checked"), function () {
             values.push($(this).val());
         });
-        values.forEach(item => {
-            $.ajax({
-                type: "DELETE",
-                url: '<c:url value="/api/building/"/>' + item,
-                dataType: "json",//kieu du lieu tu server tra ve client
-                contentType: "application/json",//kieu du lieu tu client gui ve server
-                success: function (response) {
-                    window.location.reload();
-                },
-                error: function (response) {
-                    alert("fail")
-                    console.log(response)
-                }
-            });
-        })
+        let data = {};
+        data["buildingIds"] = values;
+        $.ajax({
+            type: "DELETE",
+            url: '<c:url value="/api/building"/>',
+            data:JSON.stringify(data),
+            dataType: "json",//kieu du lieu tu server tra ve client
+            contentType: "application/json",//kieu du lieu tu client gui ve server
+            success: function (response) {
+                window.location.reload();
+            },
+            error: function (response) {
+                alert("fail")
+                console.log(response)
+            }
+        });
     })
 
     function deleteOneBuilding(value) {

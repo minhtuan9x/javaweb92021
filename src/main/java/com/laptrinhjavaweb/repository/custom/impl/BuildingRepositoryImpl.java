@@ -25,166 +25,159 @@ import java.util.stream.Collectors;
 
 @Repository
 public class BuildingRepositoryImpl implements BuildingRepositoryCustom {
-	@PersistenceContext
-	private EntityManager entityManager;
-	@Autowired
-	private UserRepository userRepository;
-	@Autowired
-	private AssignmentBuildingRepository assignmentBuildingRepository;
-	@Autowired
-	private RentAreaRepository rentAreaRepository;
+    @PersistenceContext
+    private EntityManager entityManager;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private AssignmentBuildingRepository assignmentBuildingRepository;
+    @Autowired
+    private RentAreaRepository rentAreaRepository;
 
-	@Override
-	public List<BuildingEntity> findAll(BuildingSearchBuilder buildingSearchBuilder) {
-		try {
-			String sql = buildQuery(buildingSearchBuilder);
-			Query query = entityManager.createNativeQuery(sql, BuildingEntity.class);
-			return query.getResultList();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ArrayList<>();
-		}
-	}
+    @Override
+    public List<BuildingEntity> findAll(BuildingSearchBuilder buildingSearchBuilder) {
+        try {
+            String sql = buildQuery(buildingSearchBuilder);
+            Query query = entityManager.createNativeQuery(sql, BuildingEntity.class);
+            return query.getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
 
-	@Transactional
-	@Override
-	public void assignmentBuilding(List<UserEntity> userEntities, BuildingEntity buildingEntity) {
-		for(UserEntity item : userRepository.getAllStaffByBuildingID(buildingEntity.getId())){
-			int flag = 0;
-			for (UserEntity item2 : userEntities){
-				if(item.getId()==item2.getId())
-					flag++;
-			}
-			if(flag==0){
-				AssignmentBuildingEntity assignmentBuildingEntity
-						= assignmentBuildingRepository.findByBuildingEntityAndUserEntity(buildingEntity,item);
-				entityManager.remove(assignmentBuildingEntity);
-			}
+    @Transactional
+    @Override
+    public void assignmentBuilding(List<UserEntity> userEntities, BuildingEntity buildingEntity) {
+        for (UserEntity item : userRepository.getAllStaffByBuildingID(buildingEntity.getId())) {
+            int flag = 0;
+            for (UserEntity item2 : userEntities) {
+                if (item.getId() == item2.getId())
+                    flag++;
+            }
+            if (flag == 0) {
+                AssignmentBuildingEntity assignmentBuildingEntity
+                        = assignmentBuildingRepository.findByBuildingEntityAndUserEntity(buildingEntity, item);
+                entityManager.remove(assignmentBuildingEntity);
+            }
 
-		}
-		for(UserEntity item : userEntities){
-			int flag = 0;
-			for (UserEntity item2 : userRepository.getAllStaffByBuildingID(buildingEntity.getId())){
-				if(item.getId()==item2.getId())
-					flag++;
-			}
-			if(flag==0){
+        }
+        for (UserEntity item : userEntities) {
+            int flag = 0;
+            for (UserEntity item2 : userRepository.getAllStaffByBuildingID(buildingEntity.getId())) {
+                if (item.getId() == item2.getId())
+                    flag++;
+            }
+            if (flag == 0) {
 
-				AssignmentBuildingEntity assignmentBuildingEntity = new AssignmentBuildingEntity();
-				assignmentBuildingEntity.setBuildingEntity(buildingEntity);
-				assignmentBuildingEntity.setUserEntity(item);
-				entityManager.persist(assignmentBuildingEntity);
-			}
-		}
-	}
+                AssignmentBuildingEntity assignmentBuildingEntity = new AssignmentBuildingEntity();
+                assignmentBuildingEntity.setBuildingEntity(buildingEntity);
+                assignmentBuildingEntity.setUserEntity(item);
+                entityManager.persist(assignmentBuildingEntity);
+            }
+        }
+    }
 
-	@Transactional
-	@Override
-	public void deleteBuilding(BuildingEntity buildingEntity) {
-		if(buildingEntity.getRentAreaEntities().size()>0){
-			for(RentAreaEntity item :buildingEntity.getRentAreaEntities()){
-				RentAreaEntity rentAreaEntity = rentAreaRepository.findOne(item.getId());
-				entityManager.remove(rentAreaEntity);
-			}
-		}
-		if(buildingEntity.getAssignmentBuildingEntities().size()>0){
-			for(AssignmentBuildingEntity item :buildingEntity.getAssignmentBuildingEntities()){
-				AssignmentBuildingEntity assignmentBuildingEntity = assignmentBuildingRepository.findOne(item.getId());
-				entityManager.remove(assignmentBuildingEntity);
-			}
-		}
-		entityManager.remove(buildingEntity);
-	}
+    @Transactional
+    @Override
+    public void deleteBuilding(List<BuildingEntity> buildingEntities) {
+        buildingEntities.forEach(item -> {
+            rentAreaRepository.deleteByBuildingEntity_Id(item.getId());
+            assignmentBuildingRepository.deleteByBuildingEntity_Id(item.getId());
+            entityManager.remove(item);
+        });
+    }
 
-	public String buildQuery(BuildingSearchBuilder buildingSearchBuilder) {
+    public String buildQuery(BuildingSearchBuilder buildingSearchBuilder) {
 
-		StringBuilder queryFinal = new StringBuilder("select * from building as bd ");
+        StringBuilder queryFinal = new StringBuilder("select * from building as bd ");
 //		bd.id,bd.name,bd.street,bd.ward,bd.district,bd.managername,"
 //				+ "bd.managerphone,bd.floorarea,bd.rentpricedescription,bd.rentprice,bd.servicefee
-		StringBuilder join = new StringBuilder();
-		buildJoinQuery(join, buildingSearchBuilder);
-		StringBuilder where = new StringBuilder("\nwhere 1=1 ");
-		List<String> likeFields = Arrays.asList("name", "ward", "street", "managername", "managerphone");
-		List<String> operatorFields = Arrays.asList("floorarea", "district", "numberOfBasement", "direction", "level");
-		buildQueryPart1(buildingSearchBuilder, where, likeFields, operatorFields);
-		buildQueryPart2(buildingSearchBuilder, where);
-		where.append("\ngroup by bd.id");
-		queryFinal.append(join).append(where);
-		System.out.println("===================================");
-		System.out.println(queryFinal.toString());
-		return queryFinal.toString();
-	}
+        StringBuilder join = new StringBuilder();
+        buildJoinQuery(join, buildingSearchBuilder);
+        StringBuilder where = new StringBuilder("\nwhere 1=1 ");
+        List<String> likeFields = Arrays.asList("name", "ward", "street", "managername", "managerphone");
+        List<String> operatorFields = Arrays.asList("floorarea", "district", "numberOfBasement", "direction", "level");
+        buildQueryPart1(buildingSearchBuilder, where, likeFields, operatorFields);
+        buildQueryPart2(buildingSearchBuilder, where);
+        where.append("\ngroup by bd.id");
+        queryFinal.append(join).append(where);
+        System.out.println("===================================");
+        System.out.println(queryFinal.toString());
+        return queryFinal.toString();
+    }
 
-	public void buildJoinQuery(StringBuilder join, BuildingSearchBuilder buildingSearchBuilder) {
-		if (ValidateUtil.isValid(buildingSearchBuilder.getRentAreaTo())
-				|| ValidateUtil.isValid(buildingSearchBuilder.getRentAreaFrom()))
-			join.append("\ninner join rentarea as ra on bd.id = ra.buildingid ");
-		if (ValidateUtil.isValid(buildingSearchBuilder.getStaffID()))
-			join.append(
-					"\ninner join assignmentbuilding as ab on bd.id = ab.buildingid inner join user as u on ab.staffid = u.id ");
-	}
-	public void buildQueryPart1(BuildingSearchBuilder buildingSearchBuilder, StringBuilder where,
-			List<String> likeFields, List<String> operatorFields) {
-		try {
-			Field[] fields = BuildingSearchBuilder.class.getDeclaredFields();
-			for (Field field : fields) {
-				field.setAccessible(true);
-				Object fieldValue = field.get(buildingSearchBuilder);
-				if (ValidateUtil.isValid(fieldValue)) {
-					String fieldName = field.getName().toLowerCase();
-					for (String operatorField : operatorFields) {
-						if (operatorField.equals(fieldName)) {
-							if (field.getType().toString().equals("class java.lang.String")) {
-								where.append(String.format("\nand bd.%s = '%s'", fieldName, fieldValue.toString()));
-								break;
-							}
-							if (field.getType().toString().equals("class java.lang.Integer")) {
-								where.append(String.format("\nand bd.%s = %s", fieldName, fieldValue.toString()));
-								break;
-							}
-						}
-					}
-					for (String likeField : likeFields) {
-						if (likeField.equals(fieldName)) {
-							where.append(String.format("\nand bd.%s like '%s'", fieldName,
-									"%" + fieldValue.toString() + "%"));
-							break;
-						}
-					}
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+    public void buildJoinQuery(StringBuilder join, BuildingSearchBuilder buildingSearchBuilder) {
+        if (ValidateUtil.isValid(buildingSearchBuilder.getRentAreaTo())
+                || ValidateUtil.isValid(buildingSearchBuilder.getRentAreaFrom()))
+            join.append("\ninner join rentarea as ra on bd.id = ra.buildingid ");
+        if (ValidateUtil.isValid(buildingSearchBuilder.getStaffID()))
+            join.append(
+                    "\ninner join assignmentbuilding as ab on bd.id = ab.buildingid inner join user as u on ab.staffid = u.id ");
+    }
 
-	private void buildQueryPart2(BuildingSearchBuilder buildingSearchBuilder, StringBuilder where) {
-		if (buildingSearchBuilder.getRentTypes() != null && buildingSearchBuilder.getRentTypes().size() > 0) {
-			where.append("\nand (");
-			String renttypes = buildingSearchBuilder.getRentTypes().stream()
-					.map(item -> ("bd.type like '%" + item + "%'")).collect(Collectors.joining(" or "));
-			where.append(renttypes);
-			where.append(" )");
-		}
+    public void buildQueryPart1(BuildingSearchBuilder buildingSearchBuilder, StringBuilder where,
+                                List<String> likeFields, List<String> operatorFields) {
+        try {
+            Field[] fields = BuildingSearchBuilder.class.getDeclaredFields();
+            for (Field field : fields) {
+                field.setAccessible(true);
+                Object fieldValue = field.get(buildingSearchBuilder);
+                if (ValidateUtil.isValid(fieldValue)) {
+                    String fieldName = field.getName().toLowerCase();
+                    for (String operatorField : operatorFields) {
+                        if (operatorField.equals(fieldName)) {
+                            if (field.getType().toString().equals("class java.lang.String")) {
+                                where.append(String.format("\nand bd.%s = '%s'", fieldName, fieldValue.toString()));
+                                break;
+                            }
+                            if (field.getType().toString().equals("class java.lang.Integer")) {
+                                where.append(String.format("\nand bd.%s = %s", fieldName, fieldValue.toString()));
+                                break;
+                            }
+                        }
+                    }
+                    for (String likeField : likeFields) {
+                        if (likeField.equals(fieldName)) {
+                            where.append(String.format("\nand bd.%s like '%s'", fieldName,
+                                    "%" + fieldValue.toString() + "%"));
+                            break;
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-		if (ValidateUtil.isValid(buildingSearchBuilder.getStaffID())) {
-			where.append("\nand u.id = " + buildingSearchBuilder.getStaffID());
-		}
+    private void buildQueryPart2(BuildingSearchBuilder buildingSearchBuilder, StringBuilder where) {
+        if (buildingSearchBuilder.getRentTypes() != null && buildingSearchBuilder.getRentTypes().size() > 0) {
+            where.append("\nand (");
+            String renttypes = buildingSearchBuilder.getRentTypes().stream()
+                    .map(item -> ("bd.type like '%" + item + "%'")).collect(Collectors.joining(" or "));
+            where.append(renttypes);
+            where.append(" )");
+        }
 
-		if (ValidateUtil.isValid(buildingSearchBuilder.getRentAreaFrom())) {
-			where.append("\nand EXISTS (select * from rentarea as ra where bd.id=ra.buildingid and ra.value >= "
-					+ buildingSearchBuilder.getRentAreaFrom() + ")");
-		}
-		if (ValidateUtil.isValid(buildingSearchBuilder.getRentAreaTo())) {
-			where.append("\nand EXISTS (select * from rentarea as ra where bd.id=ra.buildingid and ra.value <= "
-					+ buildingSearchBuilder.getRentAreaTo() + ")");
-		}
+        if (ValidateUtil.isValid(buildingSearchBuilder.getStaffID())) {
+            where.append("\nand u.id = " + buildingSearchBuilder.getStaffID());
+        }
 
-		if (ValidateUtil.isValid(buildingSearchBuilder.getRentPriceFrom())) {
-			where.append("\nand bd.rentprice >= " + buildingSearchBuilder.getRentPriceFrom());
-		}
-		if (ValidateUtil.isValid(buildingSearchBuilder.getRentPriceTo())) {
-			where.append("\nand bd.rentprice <= " + buildingSearchBuilder.getRentPriceTo());
-		}
-	}
+        if (ValidateUtil.isValid(buildingSearchBuilder.getRentAreaFrom())) {
+            where.append("\nand EXISTS (select * from rentarea as ra where bd.id=ra.buildingid and ra.value >= "
+                    + buildingSearchBuilder.getRentAreaFrom() + ")");
+        }
+        if (ValidateUtil.isValid(buildingSearchBuilder.getRentAreaTo())) {
+            where.append("\nand EXISTS (select * from rentarea as ra where bd.id=ra.buildingid and ra.value <= "
+                    + buildingSearchBuilder.getRentAreaTo() + ")");
+        }
+
+        if (ValidateUtil.isValid(buildingSearchBuilder.getRentPriceFrom())) {
+            where.append("\nand bd.rentprice >= " + buildingSearchBuilder.getRentPriceFrom());
+        }
+        if (ValidateUtil.isValid(buildingSearchBuilder.getRentPriceTo())) {
+            where.append("\nand bd.rentprice <= " + buildingSearchBuilder.getRentPriceTo());
+        }
+    }
 }

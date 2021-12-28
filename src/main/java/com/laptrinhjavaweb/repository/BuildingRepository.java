@@ -9,4 +9,5 @@ import java.util.List;
 public interface BuildingRepository extends BuildingRepositoryCustom, JpaRepository<BuildingEntity, Long> {
     List<BuildingEntity> findByNameContaining(String name);
     BuildingEntity findById(Long id);
+
 }

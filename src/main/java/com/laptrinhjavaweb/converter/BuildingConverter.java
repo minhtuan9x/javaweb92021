@@ -69,6 +69,17 @@ public class BuildingConverter {
             String type = String.join(",", buildingDTO.getType());
             buildingEntity.setType(type);
         }
+        if(buildingDTO.getRentArea()!=null){
+            List<RentAreaEntity> rentAreaEntities = new ArrayList<>();
+            String[] rentAreaValues = buildingDTO.getRentArea().trim().split(",");
+            for(String item : rentAreaValues){
+                RentAreaEntity rentAreaEntity = new RentAreaEntity();
+                rentAreaEntity.setBuildingEntity(buildingEntity);
+                rentAreaEntity.setValue(ParseIntUtil.getValue(item));
+                rentAreaEntities.add(rentAreaEntity);
+            }
+            buildingEntity.setRentAreaEntities(rentAreaEntities);
+        }
         return  buildingEntity;
     }
 }
