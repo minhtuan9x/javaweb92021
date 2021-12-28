@@ -46,48 +46,6 @@ public class BuildingRepositoryImpl implements BuildingRepositoryCustom {
         }
     }
 
-    @Transactional
-    @Override
-    public void assignmentBuilding(List<UserEntity> userEntities, BuildingEntity buildingEntity) {
-        for (UserEntity item : userRepository.getAllStaffByBuildingID(buildingEntity.getId())) {
-            int flag = 0;
-            for (UserEntity item2 : userEntities) {
-                if (item.getId() == item2.getId())
-                    flag++;
-            }
-            if (flag == 0) {
-                AssignmentBuildingEntity assignmentBuildingEntity
-                        = assignmentBuildingRepository.findByBuildingEntityAndUserEntity(buildingEntity, item);
-                entityManager.remove(assignmentBuildingEntity);
-            }
-
-        }
-        for (UserEntity item : userEntities) {
-            int flag = 0;
-            for (UserEntity item2 : userRepository.getAllStaffByBuildingID(buildingEntity.getId())) {
-                if (item.getId() == item2.getId())
-                    flag++;
-            }
-            if (flag == 0) {
-
-                AssignmentBuildingEntity assignmentBuildingEntity = new AssignmentBuildingEntity();
-                assignmentBuildingEntity.setBuildingEntity(buildingEntity);
-                assignmentBuildingEntity.setUserEntity(item);
-                entityManager.persist(assignmentBuildingEntity);
-            }
-        }
-    }
-
-    @Transactional
-    @Override
-    public void deleteBuilding(List<BuildingEntity> buildingEntities) {
-        buildingEntities.forEach(item -> {
-            rentAreaRepository.deleteByBuildingEntity_Id(item.getId());
-            assignmentBuildingRepository.deleteByBuildingEntity_Id(item.getId());
-            entityManager.remove(item);
-        });
-    }
-
     public String buildQuery(BuildingSearchBuilder buildingSearchBuilder) {
 
         StringBuilder queryFinal = new StringBuilder("select * from building as bd ");

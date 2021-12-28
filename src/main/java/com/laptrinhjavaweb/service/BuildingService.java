@@ -15,6 +15,6 @@ public interface BuildingService {
     BuildingDTO findById(Long id);
     BuildingDTO save(BuildingDTO buildingDTO);
     void assignmentBuilding(AssignmentBuildingRequest assignmentBuildingRequest, Long buildingID);
-    void delete(BuildingDelRequest buildingDelRequest);
+    void delete(BuildingDelRequest buildingDelRequest) throws NotFoundException;
     BuildingDTO savePart2(BuildingDTO buildingDTO) throws NotFoundException;
 }

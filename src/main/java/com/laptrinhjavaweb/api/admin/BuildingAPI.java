@@ -52,7 +52,7 @@ public class BuildingAPI {
     }
 
     @DeleteMapping
-    public BuildingDelRequest delete(@RequestBody BuildingDelRequest buildingDelRequest){
+    public BuildingDelRequest delete(@RequestBody BuildingDelRequest buildingDelRequest) throws NotFoundException {
         buildingService.delete(buildingDelRequest);
         return buildingDelRequest;
     }

@@ -31,4 +31,11 @@ public class AssignmentBuildingEntity extends BaseEntity {
     public void setUserEntity(UserEntity userEntity) {
         this.userEntity = userEntity;
     }
+    public AssignmentBuildingEntity(){
+
+    }
+    public AssignmentBuildingEntity(BuildingEntity buildingEntity, UserEntity userEntity) {
+        this.buildingEntity = buildingEntity;
+        this.userEntity = userEntity;
+    }
 }

@@ -10,9 +10,11 @@ import com.laptrinhjavaweb.dto.request.AssignmentBuildingRequest;
 import com.laptrinhjavaweb.dto.request.BuildingDelRequest;
 import com.laptrinhjavaweb.dto.response.BuildingResponse;
 import com.laptrinhjavaweb.dto.response.StaffAssignmentResponse;
+import com.laptrinhjavaweb.entity.AssignmentBuildingEntity;
 import com.laptrinhjavaweb.entity.BuildingEntity;
 import com.laptrinhjavaweb.entity.UserEntity;
 import com.laptrinhjavaweb.exception.MyException;
+import com.laptrinhjavaweb.repository.AssignmentBuildingRepository;
 import com.laptrinhjavaweb.repository.BuildingRepository;
 import com.laptrinhjavaweb.repository.RentAreaRepository;
 import com.laptrinhjavaweb.repository.UserRepository;
@@ -26,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class BuildingServiceImpl implements BuildingService {
@@ -34,20 +37,22 @@ public class BuildingServiceImpl implements BuildingService {
     @Autowired
     private RentAreaConverter rentAreaConverter;
     @Autowired
-    private BuildingRepository buildingReporitory;
+    private BuildingRepository buildingRepository;
     @Autowired
     private RentAreaService rentAreaService;
     @Autowired
     private UserRepository userRepository;
     @Autowired
     private RentAreaRepository rentAreaRepository;
+    @Autowired
+    private AssignmentBuildingRepository assignmentBuildingRepository;
 
     @Override
     public List<BuildingResponse> findAll(Map<String, Object> params, List<String> rentTypes) {
 
         List<BuildingResponse> buildingResponses = new ArrayList<>();
         BuildingSearchBuilder buildingSearchBuilder = toBuildingSearchBuilder(params, rentTypes);
-        for (BuildingEntity item : buildingReporitory.findAll(buildingSearchBuilder)) {
+        for (BuildingEntity item : buildingRepository.findAll(buildingSearchBuilder)) {
             buildingResponses.add(buildingConverter.toBuildingResponse(item));
         }
         return buildingResponses;
@@ -56,7 +61,7 @@ public class BuildingServiceImpl implements BuildingService {
     @Override
     public List<BuildingResponse> findByNameLike(String name) {
         List<BuildingResponse> buildingResponses = new ArrayList<>();
-        for (BuildingEntity item : buildingReporitory.findByNameContaining(name)) {
+        for (BuildingEntity item : buildingRepository.findByNameContaining(name)) {
             buildingResponses.add(buildingConverter.toBuildingResponse(item));
         }
         return buildingResponses;
@@ -64,14 +69,14 @@ public class BuildingServiceImpl implements BuildingService {
 
     @Override
     public BuildingDTO findById(Long id) {
-        return id != null ? buildingConverter.toBuildingDTO(buildingReporitory.findById(id)) : new BuildingDTO();
+        return id != null ? buildingConverter.toBuildingDTO(buildingRepository.findById(id)) : new BuildingDTO();
     }
 
     @Override
     public BuildingDTO save(BuildingDTO buildingDTO) {
         BuildingEntity buildingEntity = buildingConverter.toBuildingEntity(buildingDTO);
         try {
-            BuildingEntity buildingEntityGetIDafterSave = buildingReporitory.save(buildingEntity);
+            BuildingEntity buildingEntityGetIDafterSave = buildingRepository.save(buildingEntity);
             if (buildingDTO.getRentArea() != null) {
                 List<RentAreaDTO> rentAreaDTOS = rentAreaConverter.toRentAreaDTOs(buildingEntityGetIDafterSave.getId(), buildingDTO);
                 rentAreaService.saveAllByBuilding(rentAreaDTOS, buildingDTO);
@@ -85,26 +90,33 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
+    @Transactional
     public void assignmentBuilding(AssignmentBuildingRequest assignmentBuildingRequest, Long buildingID) {
-        List<UserEntity> userEntities = new ArrayList<>();
-        for (Integer item : assignmentBuildingRequest.getStaffIDs()) {
-            userEntities.add(userRepository.findOneById(item.longValue()));
-        }
-        BuildingEntity buildingEntity = buildingReporitory.findById(buildingID);
-        buildingReporitory.assignmentBuilding(userEntities, buildingEntity);
-    }
-
-    @Override
-    public void delete(BuildingDelRequest buildingDelRequest) {
-        List<BuildingEntity> buildingEntities = new ArrayList<>();
-        buildingDelRequest.getBuildingIds().forEach(item -> {
-            try {
-                buildingEntities.add(Optional.ofNullable(buildingReporitory.findOne(item)).orElseThrow(() -> new NotFoundException("Not fould Building")));
-            } catch (NotFoundException e) {
-                e.printStackTrace();
-            }
+        List<Long> staffIdOldS = assignmentBuildingRepository.findByBuildingEntity_Id(buildingID)
+                .stream().map(item -> item.getId()).collect(Collectors.toList());
+        List<Long> staffIdNews = assignmentBuildingRequest.getStaffIDs();
+        staffIdNews.forEach(item -> {
+            if (!staffIdOldS.contains(item))
+                assignmentBuildingRepository.save(
+                        new AssignmentBuildingEntity(buildingRepository.findOne(buildingID),
+                                userRepository.findOne(item)));
         });
-        buildingReporitory.deleteBuilding(buildingEntities);
+        staffIdOldS.forEach(item -> {
+            if (!staffIdNews.contains(item))
+                assignmentBuildingRepository.delete(item);
+        });
+    }
+    @Override
+    @Transactional
+    public void delete(BuildingDelRequest buildingDelRequest) throws NotFoundException {
+        if (buildingDelRequest.getBuildingIds().size() > 0) {
+            Long count = buildingRepository.countByIdIn(buildingDelRequest.getBuildingIds());//check tim thay du tra count du
+            if (count != buildingDelRequest.getBuildingIds().size())
+                throw new NotFoundException("Not found Building");
+            rentAreaRepository.deleteByBuildingEntity_IdIn(buildingDelRequest.getBuildingIds());
+            assignmentBuildingRepository.deleteByBuildingEntity_IdIn(buildingDelRequest.getBuildingIds());
+            buildingRepository.deleteByIdIn(buildingDelRequest.getBuildingIds());
+        }
     }
 
     @Transactional
@@ -114,7 +126,7 @@ public class BuildingServiceImpl implements BuildingService {
         if (Objects.nonNull(buildingDTO)) {//objects java 7, check != null
             BuildingEntity buildingEntity = buildingConverter.toBuildingEntity(buildingDTO);
             if (Objects.nonNull(buildingId) && buildingId > 0) {//id != null update
-                BuildingEntity buildingEntityFound = Optional.ofNullable(buildingReporitory.findOne(buildingId))
+                BuildingEntity buildingEntityFound = Optional.ofNullable(buildingRepository.findOne(buildingId))
                         .orElseThrow(() -> new NotFoundException("Building not found!"));
                 //Optional.ofNullable neu != null thi tra ve gia tri, null thi tra ve exception
                 buildingEntity.setCreatedBy(buildingEntityFound.getCreatedBy());
@@ -125,7 +137,7 @@ public class BuildingServiceImpl implements BuildingService {
                     buildingEntity.setRentAreaEntities(new ArrayList<>());
                 }
             }
-            BuildingDTO savedBuilding = buildingConverter.toBuildingDTO(buildingReporitory.save(buildingEntity));
+            BuildingDTO savedBuilding = buildingConverter.toBuildingDTO(buildingRepository.save(buildingEntity));
             rentAreaRepository.save(buildingEntity.getRentAreaEntities());//insert lai rent area
             return savedBuilding;
         }

@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AssignmentBuildingRequest {
-    List<Integer> staffIDs = new ArrayList<>();
+    List<Long> staffIDs = new ArrayList<>();
 
-    public List<Integer> getStaffIDs() {
+    public List<Long> getStaffIDs() {
         return staffIDs;
     }
 
-    public void setStaffIDs(List<Integer> staffIDs) {
+    public void setStaffIDs(List<Long> staffIDs) {
         this.staffIDs = staffIDs;
     }
 }
