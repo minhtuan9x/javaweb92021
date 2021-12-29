@@ -163,6 +163,16 @@ public class BuildingServiceImpl implements BuildingService {
         return null;
     }
 
+    @Override
+    @Transactional
+    public BuildingDTO saveWithCascade(BuildingDTO buildingDTO) {
+        if (buildingDTO.getId() != null) {
+            rentAreaRepository.deleteByBuildingEntity_Id(buildingDTO.getId());
+        }
+        BuildingEntity buildingEntity = buildingConverter.toBuildingEntity(buildingDTO);
+        return buildingConverter.toBuildingDTO( buildingRepository.save(buildingEntity));
+    }
+
     private Boolean rentAreaIsPresent(BuildingEntity buildingEntity, BuildingDTO buildingDTO) {
         List<String> valueAreas = new ArrayList<>();
         buildingEntity.getRentAreaEntities().forEach(item -> {

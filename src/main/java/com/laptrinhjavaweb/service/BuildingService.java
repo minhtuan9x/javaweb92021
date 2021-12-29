@@ -18,4 +18,5 @@ public interface BuildingService {
     void delete(BuildingDelRequest buildingDelRequest) throws NotFoundException;
     void deleteWithCascade(BuildingDelRequest buildingDelRequest);
     BuildingDTO savePart2(BuildingDTO buildingDTO) throws NotFoundException;
+    BuildingDTO saveWithCascade(BuildingDTO buildingDTO);
 }

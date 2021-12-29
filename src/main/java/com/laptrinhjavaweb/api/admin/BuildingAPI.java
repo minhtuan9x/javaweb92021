@@ -58,6 +58,6 @@ public class BuildingAPI {
     }
     @PostMapping("/savepart2")
     public BuildingDTO savePart2(@RequestBody BuildingDTO buildingDTO) throws NotFoundException {
-        return buildingService.savePart2(buildingDTO);
+        return buildingService.saveWithCascade(buildingDTO);
     }
 }
