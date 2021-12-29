@@ -56,10 +56,10 @@ public class BuildingEntity extends BaseEntity {
 	@Column(name = "type")
 	private String type;
 
-	@OneToMany(mappedBy = "buildingEntity", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "buildingEntity", fetch = FetchType.LAZY,cascade = {CascadeType.REMOVE})
 	private List<RentAreaEntity> rentAreaEntities = new ArrayList<>();
 
-	@OneToMany(mappedBy = "buildingEntity", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "buildingEntity", fetch = FetchType.LAZY,cascade = {CascadeType.REMOVE})
 	private List<AssignmentBuildingEntity> assignmentBuildingEntities = new ArrayList<>();
 
 	public String getDistrict() {

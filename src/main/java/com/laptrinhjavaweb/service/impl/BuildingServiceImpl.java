@@ -5,14 +5,11 @@ import com.laptrinhjavaweb.converter.BuildingConverter;
 import com.laptrinhjavaweb.converter.RentAreaConverter;
 import com.laptrinhjavaweb.dto.BuildingDTO;
 import com.laptrinhjavaweb.dto.RentAreaDTO;
-import com.laptrinhjavaweb.dto.UserDTO;
 import com.laptrinhjavaweb.dto.request.AssignmentBuildingRequest;
 import com.laptrinhjavaweb.dto.request.BuildingDelRequest;
 import com.laptrinhjavaweb.dto.response.BuildingResponse;
-import com.laptrinhjavaweb.dto.response.StaffAssignmentResponse;
 import com.laptrinhjavaweb.entity.AssignmentBuildingEntity;
 import com.laptrinhjavaweb.entity.BuildingEntity;
-import com.laptrinhjavaweb.entity.UserEntity;
 import com.laptrinhjavaweb.exception.MyException;
 import com.laptrinhjavaweb.repository.AssignmentBuildingRepository;
 import com.laptrinhjavaweb.repository.BuildingRepository;
@@ -95,16 +92,30 @@ public class BuildingServiceImpl implements BuildingService {
         List<Long> staffIdOldS = assignmentBuildingRepository.findByBuildingEntity_Id(buildingID)
                 .stream().map(item -> item.getId()).collect(Collectors.toList());
         List<Long> staffIdNews = assignmentBuildingRequest.getStaffIDs();
-        staffIdNews.forEach(item -> {
-            if (!staffIdOldS.contains(item))
-                assignmentBuildingRepository.save(
-                        new AssignmentBuildingEntity(buildingRepository.findOne(buildingID),
-                                userRepository.findOne(item)));
-        });
-        staffIdOldS.forEach(item -> {
-            if (!staffIdNews.contains(item))
-                assignmentBuildingRepository.delete(item);
-        });
+        if (staffIdNews.isEmpty()) {
+            if (staffIdOldS.isEmpty()) {
+                return;
+            }
+            assignmentBuildingRepository.deleteByIdIn(staffIdOldS);
+        } else {
+            staffIdNews.forEach(item -> {
+                if (!staffIdOldS.contains(item)) {
+                    try {
+                        assignmentBuildingRepository.save(
+                                new AssignmentBuildingEntity(
+                                        Optional.ofNullable(buildingRepository.findOne(buildingID)).orElseThrow(() -> new NotFoundException("Not foulding Building")),
+                                        Optional.ofNullable(userRepository.findOne(item)).orElseThrow(() -> new NotFoundException("Not found user")))
+                        );
+                    } catch (NotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            staffIdOldS.forEach(item -> {
+                if (!staffIdNews.contains(item))
+                    assignmentBuildingRepository.delete(item);
+            });
+        }
     }
     @Override
     @Transactional
@@ -115,6 +126,14 @@ public class BuildingServiceImpl implements BuildingService {
                 throw new NotFoundException("Not found Building");
             rentAreaRepository.deleteByBuildingEntity_IdIn(buildingDelRequest.getBuildingIds());
             assignmentBuildingRepository.deleteByBuildingEntity_IdIn(buildingDelRequest.getBuildingIds());
+            buildingRepository.deleteByIdIn(buildingDelRequest.getBuildingIds());
+        }
+    }
+
+    @Override
+    @Transactional
+    public void deleteWithCascade(BuildingDelRequest buildingDelRequest) {
+        if(!buildingDelRequest.getBuildingIds().isEmpty()){
             buildingRepository.deleteByIdIn(buildingDelRequest.getBuildingIds());
         }
     }

@@ -15,10 +15,10 @@ public class CustomerEntity extends BaseEntity {
     @Column(name = "email")
     private String email;
 
-    @OneToMany(mappedBy = "customerEntity",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "customerEntity",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private List<AssignmentCustomerEntity> assignmentCustomerEntities = new ArrayList<>();
 
-    @OneToMany(mappedBy = "customerEntity",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "customerEntity",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private List<TransactionEntity> transactionEntities = new ArrayList<>();
 
     public String getFullName() {

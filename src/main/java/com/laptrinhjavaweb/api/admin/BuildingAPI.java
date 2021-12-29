@@ -53,7 +53,7 @@ public class BuildingAPI {
 
     @DeleteMapping
     public BuildingDelRequest delete(@RequestBody BuildingDelRequest buildingDelRequest) throws NotFoundException {
-        buildingService.delete(buildingDelRequest);
+        buildingService.deleteWithCascade(buildingDelRequest);
         return buildingDelRequest;
     }
     @PostMapping("/savepart2")
