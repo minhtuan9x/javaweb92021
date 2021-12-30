@@ -254,31 +254,21 @@
                             <label class="col-sm-3 control-label no-padding-right">
                             </label>
                             <div class="col-sm-9">
-                                <button type="button" class="btn btn-primary" id="btnAddBuilding">Thêm toà
-                                    nhà
-                                </button>
+                                <c:if test="${modelBuilding.id==null}">
+                                    <button type="button" class="btn btn-primary" id="btnAddBuilding">Thêm toà
+                                        nhà
+                                    </button>
+                                </c:if>
+                                <c:if test="${modelBuilding.id!=null}">
+                                    <button type="button" class="btn btn-primary" id="btnAddBuilding">Update toà nhà
+                                    </button>
+                                </c:if>
+
                                 <button type="button" class="btn btn-primary">Huỷ</button>
                             </div>
                         </div>
                     </form:form>
-
                 </div>
-
-            </div>
-            <div class="row">
-                <div class="col-xs-12">
-
-
-                </div>
-            </div>
-            <br/>
-            <div class="row">
-
-                <div class="col-xs-12">
-
-                </div><!-- /.span -->
-
-
             </div>
         </div><!-- /.page-content -->
     </div>
@@ -289,12 +279,12 @@
         let data = {}
         let formData = $('#formEdit').serializeArray();
         let id = ${modelBuilding.id}+'';
-        if((id)!=''){
+        if ((id) != '') {
             data["id"] = id;
         }
         let buildingTypes = [];
-        formData.forEach(item=>{
-            if(item.name=="type"){
+        formData.forEach(item => {
+            if (item.name == "type") {
                 buildingTypes.push(item.value);
             }
             data[item.name] = item.value
@@ -302,12 +292,12 @@
         data["type"] = buildingTypes;
         $.ajax({
             type: "post",
-            url: '<c:url value="/api/building/savepart2"/>',
+            url: '<c:url value="/api/building"/>',
             data: JSON.stringify(data),
             dataType: "json",//kieu du lieu tu server tra ve client
             contentType: "application/json",//kieu du lieu tu client gui ve server
             success: function (response) {
-                window.location.href='<c:url value="/admin/building-list" />'
+                window.location.href = '<c:url value="/admin/building-list" />'
             },
             error: function (response) {
                 alert("fail")

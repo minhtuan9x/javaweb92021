@@ -28,15 +28,9 @@ public class BuildingAPI {
                                           @RequestParam(name = "renttypes", required = false) List<String> rentTypes) {
         return buildingService.findAll(params, rentTypes);
     }
-
-    @GetMapping("/name")
-    public List<BuildingResponse> findByNameLike(@RequestParam(required = false, name = "name") String name) {
-        return buildingService.findByNameLike(name);
-    }
-
     @PostMapping
     public BuildingDTO save(@RequestBody(required = false) BuildingDTO buildingDTO) {
-        return buildingService.save(buildingDTO);
+        return buildingService.saveWithCascade(buildingDTO);
     }
 
     @GetMapping("/{id}/staff")
@@ -55,9 +49,5 @@ public class BuildingAPI {
     public BuildingDelRequest delete(@RequestBody BuildingDelRequest buildingDelRequest) throws NotFoundException {
         buildingService.deleteWithCascade(buildingDelRequest);
         return buildingDelRequest;
-    }
-    @PostMapping("/savepart2")
-    public BuildingDTO savePart2(@RequestBody BuildingDTO buildingDTO) throws NotFoundException {
-        return buildingService.saveWithCascade(buildingDTO);
     }
 }
