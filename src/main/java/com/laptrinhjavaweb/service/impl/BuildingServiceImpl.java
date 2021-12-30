@@ -56,15 +56,6 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
-    public List<BuildingResponse> findByNameLike(String name) {
-        List<BuildingResponse> buildingResponses = new ArrayList<>();
-        for (BuildingEntity item : buildingRepository.findByNameContaining(name)) {
-            buildingResponses.add(buildingConverter.toBuildingResponse(item));
-        }
-        return buildingResponses;
-    }
-
-    @Override
     public BuildingDTO findById(Long id) {
         return id != null ? buildingConverter.toBuildingDTO(buildingRepository.findById(id)) : new BuildingDTO();
     }
