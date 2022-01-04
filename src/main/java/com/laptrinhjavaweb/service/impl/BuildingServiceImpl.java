@@ -6,9 +6,9 @@ import com.laptrinhjavaweb.converter.RentAreaConverter;
 import com.laptrinhjavaweb.dto.BuildingDTO;
 import com.laptrinhjavaweb.dto.RentAreaDTO;
 import com.laptrinhjavaweb.dto.request.BuildingDelRequest;
+import com.laptrinhjavaweb.dto.request.BuildingSearchRequest;
 import com.laptrinhjavaweb.dto.response.BuildingResponse;
 import com.laptrinhjavaweb.entity.BuildingEntity;
-import com.laptrinhjavaweb.entity.UserEntity;
 import com.laptrinhjavaweb.exception.MyException;
 import com.laptrinhjavaweb.repository.BuildingRepository;
 import com.laptrinhjavaweb.repository.RentAreaRepository;
@@ -22,8 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -41,14 +39,23 @@ public class BuildingServiceImpl implements BuildingService {
     private UserRepository userRepository;
     @Autowired
     private RentAreaRepository rentAreaRepository;
-//    @Autowired
-//    private AssignmentBuildingRepository assignmentBuildingRepository;
+
 
     @Override
     public List<BuildingResponse> findAll(Map<String, Object> params, List<String> rentTypes) {
 
         List<BuildingResponse> buildingResponses = new ArrayList<>();
         BuildingSearchBuilder buildingSearchBuilder = toBuildingSearchBuilder(params, rentTypes);
+        for (BuildingEntity item : buildingRepository.findAll(buildingSearchBuilder)) {
+            buildingResponses.add(buildingConverter.toBuildingResponse(item));
+        }
+        return buildingResponses;
+    }
+
+    @Override
+    public List<BuildingResponse> findAll(BuildingSearchRequest buildingSearchRequest) {
+        List<BuildingResponse> buildingResponses = new ArrayList<>();
+        BuildingSearchBuilder buildingSearchBuilder = toBuildingSearchBuilder(buildingSearchRequest);
         for (BuildingEntity item : buildingRepository.findAll(buildingSearchBuilder)) {
             buildingResponses.add(buildingConverter.toBuildingResponse(item));
         }
@@ -80,13 +87,9 @@ public class BuildingServiceImpl implements BuildingService {
     @Transactional
     public void assignmentBuilding(List<Long> staffIds, Long buildingID) throws NotFoundException {
         try {
-            List<UserEntity> userEntities = new ArrayList<>();
-            staffIds.forEach(item->{
-                userEntities.add(userRepository.findOne(item));
-            });
             BuildingEntity buildingEntity = buildingRepository.findOne(buildingID);
-            buildingEntity.setUserEntities(new HashSet<>());
-            buildingEntity.getUserEntities().addAll(userEntities);
+            buildingEntity.setUserEntities(new HashSet<>(Optional.ofNullable(userRepository.findAll(staffIds))
+                    .orElseThrow(()->new NotFoundException("Not Found User"))));
             buildingRepository.save(buildingEntity);
         }catch (Exception e){
             e.printStackTrace();
@@ -165,6 +168,35 @@ public class BuildingServiceImpl implements BuildingService {
                     .managerName((String) MapUtil.getValue(paramsPsd, "managername"))
                     .managerPhone((String) MapUtil.getValue(paramsPsd, "managerphone"))
                     .staffID(ParseIntUtil.getValue(MapUtil.getValue(paramsPsd, "staffid"))).rentTypes(rentTypes)
+                    .build();
+            return buildingSearchBuilder;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private BuildingSearchBuilder toBuildingSearchBuilder(BuildingSearchRequest buildingSearchRequest) {
+        try {
+            BuildingSearchBuilder buildingSearchBuilder = new BuildingSearchBuilder.Builder()
+                    .name(buildingSearchRequest.getName())
+                    .floorArea(buildingSearchRequest.getFloorArea())
+                    .district(buildingSearchRequest.getDistrictCode())
+                    .ward(buildingSearchRequest.getWard())
+                    .street(buildingSearchRequest.getStreet())
+                    .numberOfBasement(buildingSearchRequest.getNumberOfBasement())
+                    .direction(buildingSearchRequest.getDirection())
+                    .level(buildingSearchRequest.getLevel())
+                    .rentAreaFrom(buildingSearchRequest.getRentAreaFrom())
+                    .rentAreaTo(buildingSearchRequest.getRentAreaTo())
+                    .rentPriceFrom(buildingSearchRequest.getRentPriceFrom())
+                    .rentPriceTo(buildingSearchRequest.getRentPriceTo())
+                    .managerName(buildingSearchRequest.getManagerName())
+                    .managerPhone(buildingSearchRequest.getManagerPhone())
+                    .staffID(buildingSearchRequest.getStaffID())
+                    .rentTypes(buildingSearchRequest.getRentTypes()
+                            .stream().map(item->item.replace("'",""))
+                            .collect(Collectors.toList()))
                     .build();
             return buildingSearchBuilder;
         } catch (Exception e) {

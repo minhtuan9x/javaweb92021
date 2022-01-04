@@ -33,15 +33,13 @@ public class BuildingController {
     private BuildingConverter buildingConverter;
 
     @GetMapping("/building-list")
-    public ModelAndView buildingList(@ModelAttribute("modelSearch") BuildingSearchRequest buildingSearchRequest,
-                                     @RequestParam(required = false) Map<String, Object> params,
-                                     @RequestParam(name = "rentTypes",required = false) List<String> rentTypes){
+    public ModelAndView buildingList(@ModelAttribute("modelSearch") BuildingSearchRequest buildingSearchRequest){
         ModelAndView modelAndView = new ModelAndView("admin/building/list");
         modelAndView.addObject("modelSearch",buildingConverter.toBuildingSearchRequest(buildingSearchRequest));
         modelAndView.addObject("modelDistrict",districtService.getAll());
         modelAndView.addObject("modelStaff",userService.getAllStaff());
         modelAndView.addObject("modelBuildingType",buildingTypeService.getAll());
-        modelAndView.addObject("modelBuildings",buildingService.findAll(params,rentTypes));
+        modelAndView.addObject("modelBuildings",buildingService.findAll(buildingSearchRequest));
         return modelAndView;
     }
     @GetMapping("/building-edit")

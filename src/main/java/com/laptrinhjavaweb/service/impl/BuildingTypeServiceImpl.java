@@ -16,7 +16,7 @@ public class BuildingTypeServiceImpl implements BuildingTypeService {
         List<BuildingTypeResponse> buildingTypeDTOS = new ArrayList<>();
         for(BuildingTypeEnum item : BuildingTypeEnum.values()){
             BuildingTypeResponse buildingTypeResponse = new BuildingTypeResponse();
-            buildingTypeResponse.setCode(item.name());
+            buildingTypeResponse.setCode(item.toString());
             buildingTypeResponse.setName(item.getBuildingTypeValue());
             buildingTypeDTOS.add(buildingTypeResponse);
         }
@@ -28,7 +28,7 @@ public class BuildingTypeServiceImpl implements BuildingTypeService {
         List<BuildingTypeResponse> buildingTypeResponses = new ArrayList<>();
         for(BuildingTypeEnum item :BuildingTypeEnum.values()){
             BuildingTypeResponse buildingTypeResponse = new BuildingTypeResponse();
-            buildingTypeResponse.setCode(item.name());
+            buildingTypeResponse.setCode(item.toString());
             buildingTypeResponse.setName(item.getBuildingTypeValue());
             if(buildingDTO.getType()!=null){
                 for(String item2: buildingDTO.getType()){
