@@ -10,5 +10,4 @@ import java.util.List;
 public interface RentAreaRepository extends RentAreaRepositoryCustom, JpaRepository<RentAreaEntity,Long> {
     List<RentAreaEntity> findByBuildingEntity(BuildingEntity buildingEntity);
     void deleteByBuildingEntity_Id(Long id);
-    void deleteByBuildingEntity_IdIn(List<Long> id);
 }

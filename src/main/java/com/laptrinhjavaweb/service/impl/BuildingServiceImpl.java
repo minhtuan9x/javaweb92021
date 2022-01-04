@@ -5,13 +5,11 @@ import com.laptrinhjavaweb.converter.BuildingConverter;
 import com.laptrinhjavaweb.converter.RentAreaConverter;
 import com.laptrinhjavaweb.dto.BuildingDTO;
 import com.laptrinhjavaweb.dto.RentAreaDTO;
-import com.laptrinhjavaweb.dto.request.AssignmentBuildingRequest;
 import com.laptrinhjavaweb.dto.request.BuildingDelRequest;
 import com.laptrinhjavaweb.dto.response.BuildingResponse;
-import com.laptrinhjavaweb.entity.AssignmentBuildingEntity;
 import com.laptrinhjavaweb.entity.BuildingEntity;
+import com.laptrinhjavaweb.entity.UserEntity;
 import com.laptrinhjavaweb.exception.MyException;
-import com.laptrinhjavaweb.repository.AssignmentBuildingRepository;
 import com.laptrinhjavaweb.repository.BuildingRepository;
 import com.laptrinhjavaweb.repository.RentAreaRepository;
 import com.laptrinhjavaweb.repository.UserRepository;
@@ -24,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -41,8 +41,8 @@ public class BuildingServiceImpl implements BuildingService {
     private UserRepository userRepository;
     @Autowired
     private RentAreaRepository rentAreaRepository;
-    @Autowired
-    private AssignmentBuildingRepository assignmentBuildingRepository;
+//    @Autowired
+//    private AssignmentBuildingRepository assignmentBuildingRepository;
 
     @Override
     public List<BuildingResponse> findAll(Map<String, Object> params, List<String> rentTypes) {
@@ -76,50 +76,23 @@ public class BuildingServiceImpl implements BuildingService {
             return null;
         }
     }
+    @Override
+    @Transactional
+    public void assignmentBuilding(List<Long> staffIds, Long buildingID) throws NotFoundException {
+        try {
+            List<UserEntity> userEntities = new ArrayList<>();
+            staffIds.forEach(item->{
+                userEntities.add(userRepository.findOne(item));
+            });
+            BuildingEntity buildingEntity = buildingRepository.findOne(buildingID);
+            buildingEntity.setUserEntities(new HashSet<>());
+            buildingEntity.getUserEntities().addAll(userEntities);
+            buildingRepository.save(buildingEntity);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
-    @Override
-    @Transactional
-    public void assignmentBuilding(AssignmentBuildingRequest assignmentBuildingRequest, Long buildingID) {
-        List<Long> staffIdOldS = assignmentBuildingRepository.findByBuildingEntity_Id(buildingID)
-                .stream().map(item -> item.getId()).collect(Collectors.toList());
-        List<Long> staffIdNews = assignmentBuildingRequest.getStaffIDs();
-        if (staffIdNews.isEmpty()) {
-            if (staffIdOldS.isEmpty()) {
-                return;
-            }
-            assignmentBuildingRepository.deleteByIdIn(staffIdOldS);
-        } else {
-            staffIdNews.forEach(item -> {
-                if (!staffIdOldS.contains(item)) {
-                    try {
-                        assignmentBuildingRepository.save(
-                                new AssignmentBuildingEntity(
-                                        Optional.ofNullable(buildingRepository.findOne(buildingID)).orElseThrow(() -> new NotFoundException("Not foulding Building")),
-                                        Optional.ofNullable(userRepository.findOne(item)).orElseThrow(() -> new NotFoundException("Not found user")))
-                        );
-                    } catch (NotFoundException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-            staffIdOldS.forEach(item -> {
-                if (!staffIdNews.contains(item))
-                    assignmentBuildingRepository.delete(item);
-            });
-        }
-    }
-    @Override
-    @Transactional
-    public void delete(BuildingDelRequest buildingDelRequest) throws NotFoundException {
-        if (buildingDelRequest.getBuildingIds().size() > 0) {
-            Long count = buildingRepository.countByIdIn(buildingDelRequest.getBuildingIds());//check tim thay du tra count du
-            if (count != buildingDelRequest.getBuildingIds().size())
-                throw new NotFoundException("Not found Building");
-            rentAreaRepository.deleteByBuildingEntity_IdIn(buildingDelRequest.getBuildingIds());
-            assignmentBuildingRepository.deleteByBuildingEntity_IdIn(buildingDelRequest.getBuildingIds());
-            buildingRepository.deleteByIdIn(buildingDelRequest.getBuildingIds());
-        }
-    }
 
     @Override
     @Transactional

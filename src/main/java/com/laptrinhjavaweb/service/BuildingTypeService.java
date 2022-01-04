@@ -1,7 +1,6 @@
 package com.laptrinhjavaweb.service;
 
 import com.laptrinhjavaweb.dto.BuildingDTO;
-import com.laptrinhjavaweb.dto.BuildingTypeDTO;
 import com.laptrinhjavaweb.dto.response.BuildingTypeResponse;
 
 import java.util.List;

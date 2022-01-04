@@ -2,6 +2,7 @@ package com.laptrinhjavaweb.converter;
 
 
 import com.laptrinhjavaweb.dto.BuildingDTO;
+import com.laptrinhjavaweb.dto.UserDTO;
 import com.laptrinhjavaweb.dto.request.BuildingSearchRequest;
 import com.laptrinhjavaweb.dto.response.BuildingResponse;
 import com.laptrinhjavaweb.entity.BuildingEntity;
@@ -26,6 +27,8 @@ public class BuildingConverter {
 
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private UserConverter userConverter;
 
     public BuildingResponse toBuildingResponse(BuildingEntity buildingEntity) {
         BuildingResponse buildingResponse;
@@ -56,6 +59,13 @@ public class BuildingConverter {
                 typeDTOs.add(item);
             }
             buildingDTO.setType(typeDTOs);
+        }
+        List<UserDTO> userDTOS = new ArrayList<>();
+        if (buildingEntity.getUserEntities().size() > 0) {
+            buildingEntity.getUserEntities().forEach(item -> {
+                userDTOS.add(userConverter.convertToDto(item));
+            });
+            buildingDTO.setUserDTOS(userDTOS);
         }
         return buildingDTO;
     }
