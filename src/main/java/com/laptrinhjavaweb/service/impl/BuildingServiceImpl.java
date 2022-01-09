@@ -194,9 +194,7 @@ public class BuildingServiceImpl implements BuildingService {
                     .managerName(buildingSearchRequest.getManagerName())
                     .managerPhone(buildingSearchRequest.getManagerPhone())
                     .staffID(buildingSearchRequest.getStaffID())
-                    .rentTypes(buildingSearchRequest.getRentTypes()
-                            .stream().map(item->item.replace("'",""))
-                            .collect(Collectors.toList()))
+                    .rentTypes(buildingSearchRequest.getRentTypes())
                     .build();
             return buildingSearchBuilder;
         } catch (Exception e) {

@@ -35,7 +35,6 @@ public class BuildingController {
     @GetMapping("/building-list")
     public ModelAndView buildingList(@ModelAttribute("modelSearch") BuildingSearchRequest buildingSearchRequest){
         ModelAndView modelAndView = new ModelAndView("admin/building/list");
-        modelAndView.addObject("modelSearch",buildingConverter.toBuildingSearchRequest(buildingSearchRequest));
         modelAndView.addObject("modelDistrict",districtService.getAll());
         modelAndView.addObject("modelStaff",userService.getAllStaff());
         modelAndView.addObject("modelBuildingType",buildingTypeService.getAll());
