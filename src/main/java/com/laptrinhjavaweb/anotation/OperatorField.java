@@ -9,5 +9,4 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface OperatorField {
     String operator() default "=";
-    String joinQuery() default "";
 }

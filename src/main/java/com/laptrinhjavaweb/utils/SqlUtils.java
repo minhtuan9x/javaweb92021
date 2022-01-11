@@ -40,7 +40,6 @@ public class SqlUtils {
                         String fieldName = field.getName().toLowerCase();
                         if (field.isAnnotationPresent(OperatorField.class)) {
                             OperatorField operatorField = field.getAnnotation(OperatorField.class);
-                            join.append(operatorField.joinQuery());
                             if (field.getType().toString().equals("class java.lang.String")) {
                                 where.append(String.format("\nand %s.%s %s '%s'",nameTable, fieldName, operatorField.operator(), fieldValue.toString()));
                             }
@@ -58,7 +57,6 @@ public class SqlUtils {
                         }
                         if (field.isAnnotationPresent(LikeField.class)) {
                             LikeField likeField = field.getAnnotation(LikeField.class);
-                            join.append(likeField.joinQuery());
                             where.append(String.format("\nand %s.%s like '%s'",nameTable, fieldName,
                                     "%" + fieldValue.toString() + "%"));
                         }
