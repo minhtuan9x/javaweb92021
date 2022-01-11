@@ -69,11 +69,11 @@ public class SqlUtils {
                     for(String strItem : str){
                         if(strItem.startsWith("join")){
                             String joinDiff = strItem.replace("join:","");
-                            join.append(joinDiff);
+                            join.append("\n").append(joinDiff);
                         }
                         if(strItem.startsWith("query")){
                             String queryDiff = strItem.replace("query:","");
-                            where.append(queryDiff);
+                            where.append("\n").append(queryDiff);
                         }
                     }
                 }

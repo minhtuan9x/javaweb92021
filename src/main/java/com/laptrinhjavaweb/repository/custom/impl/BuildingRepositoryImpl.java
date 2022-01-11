@@ -38,26 +38,26 @@ public class BuildingRepositoryImpl implements BuildingRepositoryCustom {
         ///join
         if (ValidateUtil.isValid(buildingSearchBuilder.getRentAreaTo())
                 || ValidateUtil.isValid(buildingSearchBuilder.getRentAreaFrom()))
-            different.append("join:\ninner join rentarea as ra on bd.id = ra.buildingid,");
+            different.append("join:inner join rentarea as ra on bd.id = ra.buildingid,");
         if (ValidateUtil.isValid(buildingSearchBuilder.getStaffID()))
-            different.append("join:\ninner join assignmentbuilding as ab on bd.id = ab.buildingid inner join user as u on ab.staffid = u.id,");
+            different.append("join:inner join assignmentbuilding as ab on bd.id = ab.buildingid inner join user as u on ab.staffid = u.id,");
         //query
         if (ValidateUtil.isValid(buildingSearchBuilder.getStaffID())) {
-            different.append("query:\nand u.id = " + buildingSearchBuilder.getStaffID()+",");
+            different.append("query:and u.id = " + buildingSearchBuilder.getStaffID()+",");
         }
         if (buildingSearchBuilder.getRentTypes() != null && buildingSearchBuilder.getRentTypes().size() > 0) {
-            different.append("query:\nand (");
+            different.append("query:and (");
             String renttypes = buildingSearchBuilder.getRentTypes().stream()
                     .map(item -> ("bd.type like '%" + item + "%'")).collect(Collectors.joining(" or "));
             different.append(renttypes);
             different.append(" ),");
         }
         if (ValidateUtil.isValid(buildingSearchBuilder.getRentAreaFrom())) {
-            different.append("query:\nand EXISTS (select * from rentarea as ra where bd.id=ra.buildingid and ra.value >= "
+            different.append("query:and EXISTS (select * from rentarea as ra where bd.id=ra.buildingid and ra.value >= "
                     + buildingSearchBuilder.getRentAreaFrom() + "),");
         }
         if (ValidateUtil.isValid(buildingSearchBuilder.getRentAreaTo())) {
-            different.append("query:\nand EXISTS (select * from rentarea as ra where bd.id=ra.buildingid and ra.value <= "
+            different.append("query:and EXISTS (select * from rentarea as ra where bd.id=ra.buildingid and ra.value <= "
                     + buildingSearchBuilder.getRentAreaTo() + "),");
         }
         return different.toString();
