@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.acls.model.NotFoundException;
 import org.springframework.stereotype.Component;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +30,8 @@ public class BuildingConverter {
     private ModelMapper modelMapper;
     @Autowired
     private UserConverter userConverter;
+    @Autowired
+    private DateFormat dateFormat;
 
     public BuildingResponse toBuildingResponse(BuildingEntity buildingEntity) {
         BuildingResponse buildingResponse;
@@ -68,6 +71,17 @@ public class BuildingConverter {
             buildingDTO.setUserDTOS(userDTOS);
         }
         return buildingDTO;
+    }
+
+    public BuildingSearchRequest toBuildingSearchRequest(BuildingSearchRequest buildingSearchRequest) {
+        if (buildingSearchRequest.getRentTypes() != null) {
+            List<String> a = new ArrayList<>();
+            for (String item : buildingSearchRequest.getRentTypes()) {
+                a.add("'" + item + "'");
+            }
+            buildingSearchRequest.setRentTypes(a);
+        }
+        return buildingSearchRequest;
     }
 
     public BuildingEntity toBuildingEntity(BuildingDTO buildingDTO) {
