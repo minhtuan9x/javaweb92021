@@ -1,5 +1,6 @@
 package com.laptrinhjavaweb.service.impl;
 
+import com.laptrinhjavaweb.constant.SystemConstant;
 import com.laptrinhjavaweb.converter.CustomerConverter;
 import com.laptrinhjavaweb.dto.CustomerDTO;
 import com.laptrinhjavaweb.dto.request.CustomerSearchRequest;
@@ -39,8 +40,8 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public void assignmentCustomer(List<Long> staffIds, Long customerId) throws NotFoundException {
-        CustomerEntity customerEntity = Optional.ofNullable(customerRepository.findOne(customerId)).orElseThrow(() ->new NotFoundException("Not found Customer"));
-        customerEntity.setUserEntities(Optional.ofNullable(userRepository.findAll(staffIds)).orElseThrow(()->new NotFoundException("Not Found Customer")));
+        CustomerEntity customerEntity = Optional.ofNullable(customerRepository.findOne(customerId)).orElseThrow(() ->new NotFoundException(SystemConstant.NF_CUSTOMER));
+        customerEntity.setUserEntities(Optional.ofNullable(userRepository.findAll(staffIds)).orElseThrow(()->new NotFoundException(SystemConstant.NF_CUSTOMER)));
         customerRepository.save(customerEntity);
     }
 

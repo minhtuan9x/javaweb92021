@@ -19,13 +19,13 @@ public class SqlUtils {
         try {
             if (classObj.isAnnotationPresent(SearchObject.class)) {
                 SearchObject searchObjectAno = classObj.getAnnotation(SearchObject.class);
-                if(searchObjectAno.tableName().isEmpty())
+                if (searchObjectAno.tableName().isEmpty())
                     throw new ObjectSearchException("Require table name !!!");
-                else{
-                    if(searchObjectAno.aliasValue().isEmpty()){
+                else {
+                    if (searchObjectAno.aliasValue().isEmpty()) {
                         nameTable = searchObjectAno.tableName();
                         query.append("select * from ").append(nameTable);
-                    }else {
+                    } else {
                         nameTable = searchObjectAno.aliasValue();
                         query.append("select * from ").append(searchObjectAno.tableName()).append(" as ").append(nameTable);
                     }
@@ -41,22 +41,22 @@ public class SqlUtils {
                         if (field.isAnnotationPresent(OperatorField.class)) {
                             OperatorField operatorField = field.getAnnotation(OperatorField.class);
                             if (field.getType().toString().equals("class java.lang.String")) {
-                                where.append(String.format("\nand %s.%s %s '%s'",nameTable, fieldName, operatorField.operator(), fieldValue.toString()));
+                                where.append(String.format("\nand %s.%s %s '%s'", nameTable, fieldName, operatorField.operator(), fieldValue.toString()));
                             }
                             if (field.getType().toString().equals("class java.lang.Integer")) {
                                 if (fieldName.endsWith("from") || fieldName.endsWith("to")) {
                                     String fieldNameBetween = fieldName.replace("from", "").replace("to", "");
                                     where.append(String.format("\nand %s.%s %s %s",
-                                            nameTable,fieldNameBetween,
+                                            nameTable, fieldNameBetween,
                                             operatorField.operator(), fieldValue.toString()));
                                 } else {
-                                    where.append(String.format("\nand %s.%s %s %s",nameTable,fieldName, operatorField.operator(), fieldValue.toString()));
+                                    where.append(String.format("\nand %s.%s %s %s", nameTable, fieldName, operatorField.operator(), fieldValue.toString()));
                                 }
 
                             }
                         }
                         if (field.isAnnotationPresent(LikeField.class)) {
-                            where.append(String.format("\nand %s.%s like '%s'",nameTable, fieldName,
+                            where.append(String.format("\nand %s.%s like '%s'", nameTable, fieldName,
                                     "%" + fieldValue.toString() + "%"));
                         }
 //
@@ -65,24 +65,26 @@ public class SqlUtils {
 //                Ex different: join:,query:
                 for (String item : differences) {
                     String[] str = item.trim().split(",");
-                    for(String strItem : str){
-                        if(strItem.startsWith("join")){
-                            String joinDiff = strItem.replace("join:","");
+                    for (String strItem : str) {
+                        if (strItem.startsWith("join")) {
+                            String joinDiff = strItem.replace("join:", "");
                             join.append("\n").append(joinDiff);
                         }
-                        if(strItem.startsWith("query")){
-                            String queryDiff = strItem.replace("query:","");
+                        if (strItem.startsWith("query")) {
+                            String queryDiff = strItem.replace("query:", "");
                             where.append("\nand ").append(queryDiff);
                         }
                     }
                 }
+                query.append(join);
+                query.append(where);
+                if (searchObjectAno.groupBy())
+                    query.append("\ngroup by ").append(nameTable).append(".id");
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        query.append(join);
-        query.append(where);
-        query.append("\ngroup by ").append(nameTable).append(".id");
+
         return query.toString();
     }
 }

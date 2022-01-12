@@ -1,6 +1,7 @@
 package com.laptrinhjavaweb.service.impl;
 
 import com.laptrinhjavaweb.builder.BuildingSearchBuilder;
+import com.laptrinhjavaweb.constant.SystemConstant;
 import com.laptrinhjavaweb.converter.BuildingConverter;
 import com.laptrinhjavaweb.converter.RentAreaConverter;
 import com.laptrinhjavaweb.dto.BuildingDTO;
@@ -89,7 +90,7 @@ public class BuildingServiceImpl implements BuildingService {
         try {
             BuildingEntity buildingEntity = buildingRepository.findOne(buildingID);
             buildingEntity.setUserEntities(new HashSet<>(Optional.ofNullable(userRepository.findAll(staffIds))
-                    .orElseThrow(()->new NotFoundException("Not Found User"))));
+                    .orElseThrow(()->new NotFoundException(SystemConstant.NF_USER))));
             buildingRepository.save(buildingEntity);
         }catch (Exception e){
             e.printStackTrace();
@@ -113,7 +114,7 @@ public class BuildingServiceImpl implements BuildingService {
             BuildingEntity buildingEntity = buildingConverter.toBuildingEntity(buildingDTO);
             if (Objects.nonNull(buildingId) && buildingId > 0) {//id != null update
                 BuildingEntity buildingEntityFound = Optional.ofNullable(buildingRepository.findOne(buildingId))
-                        .orElseThrow(() -> new NotFoundException("Building not found!"));
+                        .orElseThrow(() -> new NotFoundException(SystemConstant.NF_BUILDING));
                 //Optional.ofNullable neu != null thi tra ve gia tri, null thi tra ve exception
                 buildingEntity.setCreatedBy(buildingEntityFound.getCreatedBy());
                 buildingEntity.setCreatedDate(buildingEntityFound.getCreatedDate());

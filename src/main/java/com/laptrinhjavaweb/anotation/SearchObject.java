@@ -7,4 +7,5 @@ import java.lang.annotation.*;
 public @interface SearchObject {
     String tableName() default "";
     String aliasValue() default "";
+    boolean groupBy() default false;
 }
