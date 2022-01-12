@@ -6,7 +6,7 @@ import com.laptrinhjavaweb.anotation.SearchObject;
 
 import java.util.List;
 
-@SearchObject(tableName = "building",aliasValue = "bd")
+@SearchObject(tableName = "building",aliasValue = "bd",groupBy = true)
 public class BuildingSearchBuilder {
     @LikeField
     private String name;
