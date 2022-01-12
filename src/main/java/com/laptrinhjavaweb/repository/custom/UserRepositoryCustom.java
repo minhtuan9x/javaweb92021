@@ -7,4 +7,5 @@ import java.util.List;
 public interface UserRepositoryCustom {
     List<UserEntity> getAllStaff();
     List<UserEntity> getAllStaffByBuildingID(Long buildingid);
+    List<UserEntity> getAllStaffByCustomerID(Long customerId);
 }

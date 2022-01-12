@@ -36,10 +36,7 @@ public class UserEntity extends BaseEntity {
     @ManyToMany(mappedBy = "userEntities",fetch = FetchType.LAZY)
     private Set<BuildingEntity> buildingEntities = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "assignmentcustomer",
-    joinColumns = @JoinColumn(name = "staffid",nullable = false),
-    inverseJoinColumns = @JoinColumn(name = "customerid",nullable = false))
+    @ManyToMany(fetch = FetchType.LAZY,mappedBy = "userEntities")
     private List<CustomerEntity> customerEntities = new ArrayList<>();
 
     public List<CustomerEntity> getCustomerEntities() {

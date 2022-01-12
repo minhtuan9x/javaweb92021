@@ -18,7 +18,10 @@ public class CustomerEntity extends BaseEntity {
 //    @OneToMany(mappedBy = "customerEntity",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
 //    private List<AssignmentCustomerEntity> assignmentCustomerEntities = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "customerEntities",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "assignmentcustomer",
+            joinColumns = @JoinColumn(name = "customerid",nullable = false),
+            inverseJoinColumns = @JoinColumn(name = "staffid",nullable = false))
     private List<UserEntity> userEntities = new ArrayList<>();
 
     @OneToMany(mappedBy = "customerEntity",fetch = FetchType.LAZY,cascade = CascadeType.ALL)

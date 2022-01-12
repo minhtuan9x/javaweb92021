@@ -22,4 +22,5 @@ public interface IUserService {
     void delete(long[] ids);
     List<UserDTO> getAllStaff();
     List<StaffAssignmentResponse> getAllStaffAssignmentBuilding(Long buildingID);
+    List<StaffAssignmentResponse> getAllStaffAssignmentCustomer(Long customerID);
 }

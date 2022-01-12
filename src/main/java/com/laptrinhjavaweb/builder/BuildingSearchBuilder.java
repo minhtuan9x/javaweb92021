@@ -1,23 +1,55 @@
 package com.laptrinhjavaweb.builder;
 
+import com.laptrinhjavaweb.anotation.LikeField;
+import com.laptrinhjavaweb.anotation.OperatorField;
+import com.laptrinhjavaweb.anotation.SearchObject;
+
 import java.util.List;
 
+@SearchObject(tableName = "building",aliasValue = "bd")
 public class BuildingSearchBuilder {
+    @LikeField
     private String name;
+
+    @OperatorField
     private Integer floorArea;
+
+    @OperatorField
     private String district;
+
+    @LikeField
     private String ward;
+
+    @LikeField
     private String street;
+
+    @OperatorField
     private Integer numberOfBasement;
+
+    @OperatorField
     private String direction;
+
+    @OperatorField
     private String level;
+
     private Integer rentAreaFrom;
+
     private Integer rentAreaTo;
+
+    @OperatorField(operator = ">=")
     private Integer rentPriceFrom;
+
+    @OperatorField(operator = "<=")
     private Integer rentPriceTo;
+
+    @LikeField
     private String managerName;
+
+    @LikeField
     private String managerPhone;
+
     private Integer staffID;
+
     private List<String> rentTypes;
 
     public String getName() {
