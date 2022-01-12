@@ -138,63 +138,64 @@
             </div>
         </div>
         <div class="row">
-
             <div class="col-xs-12">
-                <table id="simple-table" class="table table-striped table-bordered table-hover">
-                    <thead>
-                    <tr>
-                        <th class="center">
-                            <label class="pos-rel">
-                                <input type="checkbox" id="selectAll" class="ace"/>
-                                <span class="lbl"></span>
-                            </label>
-                        </th>
-                        <th>Tên</th>
-                        <th>Nhân Viên Quản Lí</th>
-                        <th>Di Động</th>
-                        <th>Email</th>
-                        <th>Người Nhập</th>
-                        <th>Ngày Nhập</th>
-                        <th>Thao Tác</th>
-                    </tr>
-                    </thead>
-
-                    <tbody>
-                    <c:forEach var="item" items="${customers}">
+                <div class="col-md-12">
+                    <table id="simple-table" class="table table-striped table-bordered table-hover">
+                        <thead>
                         <tr>
-                            <td class="center">
+                            <th class="center">
                                 <label class="pos-rel">
-                                    <input type="checkbox" class="ace" name="checkCustomers[]" value="${item.id}">
+                                    <input type="checkbox" id="selectAll" class="ace"/>
                                     <span class="lbl"></span>
                                 </label>
-                            </td>
-                            <td>${item.fullName}</td>
-                            <td>${item.staffNames}</td>
-                            <td>${item.phone}</td>
-                            <td>${item.email}</td>
-                            <td>${item.createdBy}</td>
-                            <td>${item.createDateStr}</td>
-                            <td>
-                                <button class="btn btn-xs btn-info" data-toggle="tooltip"
-                                        title="Giao Khách Hàng cho nhân viên quản lí" value="${item.id}"
-                                        onclick="assignment(value)">
-                                    <i class="fa fa-fire" aria-hidden="true"></i>
-                                </button>
-                                <button class="btn btn-xs btn-dark" data-toggle="tooltip"
-                                        title="Sửa thông tin Khách Hàng" value="${item.id}"
-                                        onclick="editCustomer(value)">
-                                    <i class="fa fa-edit" aria-hidden="true"></i>
-                                </button>
-                                <button class="btn btn-xs btn-danger" data-toggle="tooltip"
-                                        title="Xoá Khách Hàng" value="${item.id}"
-                                        onclick="deleteOneCustomer(value)">
-                                    <i class="fa fa-remove" aria-hidden="true"></i>
-                                </button>
-                            </td>
+                            </th>
+                            <th>Tên</th>
+                            <th>Nhân Viên Quản Lí</th>
+                            <th>Di Động</th>
+                            <th>Email</th>
+                            <th>Người Nhập</th>
+                            <th>Ngày Nhập</th>
+                            <th>Thao Tác</th>
                         </tr>
-                    </c:forEach>
-                    </tbody>
-                </table>
+                        </thead>
+
+                        <tbody>
+                        <c:forEach var="item" items="${customers}">
+                            <tr>
+                                <td class="center">
+                                    <label class="pos-rel">
+                                        <input type="checkbox" class="ace" name="checkCustomers[]" value="${item.id}">
+                                        <span class="lbl"></span>
+                                    </label>
+                                </td>
+                                <td>${item.fullName}</td>
+                                <td>${item.staffNames}</td>
+                                <td>${item.phone}</td>
+                                <td>${item.email}</td>
+                                <td>${item.createdBy}</td>
+                                <td>${item.createDateStr}</td>
+                                <td>
+                                    <button class="btn btn-xs btn-info" data-toggle="tooltip"
+                                            title="Giao Khách Hàng cho nhân viên quản lí" value="${item.id}"
+                                            onclick="assignment(value)">
+                                        <i class="fa fa-fire" aria-hidden="true"></i>
+                                    </button>
+                                    <button class="btn btn-xs btn-dark" data-toggle="tooltip"
+                                            title="Sửa thông tin Khách Hàng" value="${item.id}"
+                                            onclick="editCustomer(value)">
+                                        <i class="fa fa-edit" aria-hidden="true"></i>
+                                    </button>
+                                    <button class="btn btn-xs btn-danger" data-toggle="tooltip"
+                                            title="Xoá Khách Hàng" value="${item.id}"
+                                            onclick="deleteOneCustomer(value)">
+                                        <i class="fa fa-remove" aria-hidden="true"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                        </tbody>
+                    </table>
+                </div>
             </div><!-- /.span -->
 
 
@@ -232,7 +233,8 @@
                 </form>
             </div>
             <div class="modal-footer">'
-                <button type="button" id="assignment" class="btn btn-default" data-dismiss="modal">Giao Khách Hàng</button>
+                <button type="button" id="assignment" class="btn btn-default" data-dismiss="modal">Giao Khách Hàng
+                </button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
@@ -241,6 +243,7 @@
 </div>
 <script>
     let cusAssId;
+
     function assignment(value) {
         cusAssId = value;
         $.ajax({
@@ -270,6 +273,7 @@
     function openModalAssignment() {
         $('#assignmentCustomerModal').modal();
     }
+
     $("#selectAll").click(function () {
         $("input[name='checkCustomers[]']").prop('checked', $(this).prop('checked'));
 
@@ -303,14 +307,18 @@
             }
         });
     })
+
     function editCustomer(value) {
         window.location.href = "<c:url value="/admin/customer-edit"/>" + "?id=" + value;
     }
+
     let idOne;
+
     function deleteOneCustomer(value) {
         idOne = value;
         $("#myModal").modal();
     }
+
     $("#xoaCustomer").click(function (e) {
         e.preventDefault();
         $("#myModal").modal();
@@ -327,7 +335,7 @@
         $.ajax({
             type: "DELETE",
             url: '<c:url value="/api/customer"/>',
-            data:JSON.stringify(values),
+            data: JSON.stringify(values),
             dataType: "json",//kieu du lieu tu server tra ve client
             contentType: "application/json",//kieu du lieu tu client gui ve server
             success: function (response) {
