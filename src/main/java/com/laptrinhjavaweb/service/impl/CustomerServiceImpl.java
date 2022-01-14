@@ -1,5 +1,6 @@
 package com.laptrinhjavaweb.service.impl;
 
+import com.laptrinhjavaweb.builder.CustomerSearchBuilder;
 import com.laptrinhjavaweb.constant.SystemConstant;
 import com.laptrinhjavaweb.converter.CustomerConverter;
 import com.laptrinhjavaweb.dto.CustomerDTO;
@@ -31,7 +32,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public List<CustomerResponse> findAll(CustomerSearchRequest customerSearchRequest) {
         try {
-            return Optional.of(customerRepository.findAll(customerSearchRequest).stream().map(item->customerConverter.toCustomerResponse(item)).collect(Collectors.toList())).orElse(new ArrayList<>());
+            return Optional.of(customerRepository.findAll(toCustomerSearchBuilder(customerSearchRequest)).stream().map(item->customerConverter.toCustomerResponse(item)).collect(Collectors.toList())).orElse(new ArrayList<>());
         }catch (Exception e){
             e.printStackTrace();
             return new ArrayList<>();
@@ -67,5 +68,13 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerDTO findById(Long id) {
         return id!=null?customerConverter.toCustomerDTO(Optional.ofNullable(customerRepository.findOne(id)).orElse(new CustomerEntity())):new CustomerDTO();
+    }
+    private CustomerSearchBuilder toCustomerSearchBuilder(CustomerSearchRequest customerSearchRequest){
+        return new CustomerSearchBuilder.Builder()
+                .setFullName(customerSearchRequest.getFullName())
+                .setPhone(customerSearchRequest.getPhone())
+                .setEmail(customerSearchRequest.getEmail())
+                .setStaffId(customerSearchRequest.getStaffId())
+                .build();
     }
 }
