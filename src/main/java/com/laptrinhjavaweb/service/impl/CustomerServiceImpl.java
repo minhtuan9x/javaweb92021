@@ -47,16 +47,17 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @Transactional
-    public List<Long> delete(List<Long> customerIds) {
+    public List<Long> delete(List<Long> customerIds) throws NotFoundException {
+        if(customerRepository.findAll(customerIds).size()!=customerIds.size())
+            throw new NotFoundException(SystemConstant.NF_CUSTOMER);
         return customerRepository.deleteByIdIn(customerIds);
     }
 
     @Override
-    public CustomerDTO save(CustomerDTO customerDTO) {
+    public CustomerDTO save(CustomerDTO customerDTO) throws NotFoundException {
         CustomerEntity customerEntity = customerConverter.toCustomerEntity(customerDTO);
         if(customerDTO.getId()!=null){
-            CustomerEntity customerEntityFound = customerRepository.findOne(customerDTO.getId());
-            customerEntity.setCreatedDate(customerEntityFound.getCreatedDate());
+            CustomerEntity customerEntityFound = Optional.ofNullable(customerRepository.findOne(customerDTO.getId())).orElseThrow(()->new NotFoundException(SystemConstant.NF_CUSTOMER));
             customerEntity.setUserEntities(customerEntityFound.getUserEntities());
             customerEntity.setTransactionEntities(customerEntityFound.getTransactionEntities());
         }

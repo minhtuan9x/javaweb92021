@@ -4,7 +4,6 @@ import com.laptrinhjavaweb.dto.CustomerDTO;
 import com.laptrinhjavaweb.dto.response.StaffAssignmentResponse;
 import com.laptrinhjavaweb.service.CustomerService;
 import com.laptrinhjavaweb.service.IUserService;
-import com.laptrinhjavaweb.service.impl.UserService;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -35,11 +34,11 @@ public class CustomerAPI {
         return customerId;
     }
     @PostMapping
-    public ResponseEntity<CustomerDTO> save(@RequestBody CustomerDTO customerDTO){
+    public ResponseEntity<CustomerDTO> save(@RequestBody CustomerDTO customerDTO) throws NotFoundException {
         return ResponseEntity.ok().body(customerService.save(customerDTO));
     }
     @DeleteMapping
-    public ResponseEntity<Void> delete(@RequestBody List<Long> ids){
+    public ResponseEntity<Void> delete(@RequestBody List<Long> ids) throws NotFoundException {
         customerService.delete(ids);
         return ResponseEntity.noContent().build();
     }

@@ -20,7 +20,7 @@ public class BaseEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "createddate")
+    @Column(name = "createddate",updatable = false)///khong update lai data sau khi update
     @CreatedDate
     private Date createdDate;
 
