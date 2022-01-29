@@ -15,13 +15,12 @@ public class DistrictJDBCImpl implements DistrictJDBC {
 	private Connection conn = null;
 	private Statement stmt;
 	private ResultSet rs;
-	private ConnectDBUtil connectDBUtil = new ConnectDBUtil();
 
 	@Override
 	public DistrictEntity findByDistrictID(long districtID) throws SQLException {
 		DistrictEntity districtEntity = new DistrictEntity();
 		try {
-			conn = connectDBUtil.connectDB();
+			conn = ConnectDBUtil.connectDB();
 			if (conn != null) {
 				conn.setAutoCommit(false);
 				stmt = conn.createStatement();

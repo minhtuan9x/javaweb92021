@@ -21,10 +21,4 @@ public class BuildingAPI {
 			@RequestParam(required = false,name = "renttypes") List<String> rentTypes) throws SQLException {
 		return buildingService.findBuilding(params, rentTypes);
 	}
-
-	@PostMapping
-	public BuildingDTO createBuilding(@RequestBody BuildingDTO buildingDTO) {
-		// buildingService.save(buildingDTO);
-		return buildingDTO;
-	}
 }

@@ -6,7 +6,7 @@ import com.dominhtuan.dto.request.BuildingSearchRequest;
 import com.dominhtuan.dto.response.BuildingSearchResponse;
 import com.dominhtuan.entity.BuildingEntity;
 import com.dominhtuan.entity.DistrictEntity;
-import com.dominhtuan.exception.YeuDiemPhucException;
+import com.dominhtuan.exception.MyException;
 import com.dominhtuan.jdbc.BuildingJDBC;
 import com.dominhtuan.jdbc.DistrictJDBC;
 import com.dominhtuan.service.BuildingService;
@@ -91,10 +91,10 @@ public class BuildingServiceImpl implements BuildingService {
 		try {
 			if (buildingSearchRequest.getBuildingName() != null) {
 				if (buildingSearchRequest.getBuildingName().equals("yeu diem phuc")) {
-					throw new YeuDiemPhucException("Ahihi đồ ngốc");
+					throw new MyException("Ahihi đồ ngốc");
 				}
 			}
-		} catch (YeuDiemPhucException e) {
+		} catch (MyException e) {
 			throw e;
 		}
 

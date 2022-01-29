@@ -33,8 +33,8 @@ public class SqlUtil {
 
 	public static void buildQueryUsingBetween(String column, Object from, Object to, StringBuilder where) {
 		if (CheckInputUtil.isValid(from) || CheckInputUtil.isValid(to)) {
-			String fromPsd = (!CheckInputUtil.isValid(from)) ? "0" : from.toString();
-			String toPsd = (!CheckInputUtil.isValid(to)) ? String.valueOf(Integer.MAX_VALUE) : to.toString();
+			String fromPsd = !CheckInputUtil.isValid(from) ? "0" : from.toString();
+			String toPsd = !CheckInputUtil.isValid(to) ? String.valueOf(Integer.MAX_VALUE) : to.toString();
 			where.append(String.format("\nand %s between %s and %s ", column, fromPsd, toPsd));
 		}
 	}
@@ -42,8 +42,8 @@ public class SqlUtil {
 	public static void buildQueryUsingBetween(String column, Object from, Object to, StringBuilder where,
 			StringBuilder join, String joinQuery) {
 		if (CheckInputUtil.isValid(from) || CheckInputUtil.isValid(to)) {
-			String fromPsd = (!CheckInputUtil.isValid(from)) ? "0" : from.toString();
-			String toPsd = (!CheckInputUtil.isValid(to))
+			String fromPsd = !CheckInputUtil.isValid(from) ? "0" : from.toString();
+			String toPsd = !CheckInputUtil.isValid(to)
 					? String.valueOf(from instanceof Integer ? Integer.MAX_VALUE : Double.MAX_VALUE)
 					: to.toString();
 			join.append(joinQuery);

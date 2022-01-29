@@ -1,6 +1,6 @@
 package com.dominhtuan.controlleradvice;
 
-import com.dominhtuan.exception.YeuDiemPhucException;
+import com.dominhtuan.exception.MyException;
 import com.dominhtuan.util.HandleExceptionMethodUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +22,8 @@ public class ControllerAdvisor {
 		return HandleExceptionMethodUtil.handleMethod(e, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
-	@ExceptionHandler(YeuDiemPhucException.class)
-	public ResponseEntity<Map<String, Object>> handleYeuDiemPhucException(YeuDiemPhucException e) {
+	@ExceptionHandler(MyException.class)
+	public ResponseEntity<Map<String, Object>> handleMyException(MyException e) {
 		return HandleExceptionMethodUtil.handleMethod(e, HttpStatus.PAYMENT_REQUIRED);
 	}
 }
